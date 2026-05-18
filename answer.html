@@ -1038,6 +1038,141 @@
   .hint-item .hi-body{
     color:var(--text);
   }
+
+  /* ===== 힌트 팝업 모달 ===== */
+  .hint-modal{
+    position:fixed; inset:0;
+    z-index:200;
+    display:flex; align-items:center; justify-content:center;
+    padding:18px;
+    animation:modalIn 0.25s ease-out;
+  }
+  @keyframes modalIn{
+    from{opacity:0}
+    to{opacity:1}
+  }
+  .hint-modal-backdrop{
+    position:absolute; inset:0;
+    background:rgba(0,5,16,0.85);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+  }
+  .hint-modal-box{
+    position:relative;
+    width:100%;
+    max-width:420px;
+    background:linear-gradient(180deg, rgba(20,5,40,0.95), rgba(8,0,20,0.95));
+    border:1.5px solid var(--magenta);
+    box-shadow:
+      0 0 40px rgba(255,43,214,0.4),
+      0 0 80px rgba(255,43,214,0.2),
+      inset 0 0 30px rgba(255,43,214,0.06);
+    overflow:hidden;
+    animation:boxIn 0.4s cubic-bezier(0.2, 0.8, 0.3, 1.2);
+  }
+  @keyframes boxIn{
+    0%{opacity:0; transform:translateY(20px) scale(0.92); filter:blur(8px)}
+    60%{filter:blur(0)}
+    100%{opacity:1; transform:translateY(0) scale(1); filter:blur(0)}
+  }
+  .hint-modal-stripes{
+    height:6px;
+    background:repeating-linear-gradient(
+      135deg,
+      var(--magenta) 0 10px,
+      #000 10px 20px
+    );
+    animation:stripeSlide 1s linear infinite;
+  }
+  .hint-modal-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 14px 6px;
+    border-bottom:1px solid rgba(255,43,214,0.25);
+  }
+  .hm-label{
+    font-family:'Orbitron', sans-serif;
+    font-weight:900;
+    font-size:16px;
+    color:var(--magenta);
+    letter-spacing:0.22em;
+    text-shadow:0 0 12px rgba(255,43,214,0.7);
+  }
+  .hm-close{
+    background:transparent;
+    border:1px solid rgba(255,43,214,0.4);
+    color:var(--magenta);
+    width:30px; height:30px;
+    font-family:'Share Tech Mono', monospace;
+    font-size:14px;
+    cursor:pointer;
+    transition:all 0.2s;
+    line-height:1;
+    padding:0;
+  }
+  .hm-close:active{
+    background:var(--magenta);
+    color:#fff;
+  }
+  .hint-modal-warn{
+    margin:10px 14px 0;
+    padding:8px 10px;
+    background:rgba(255,176,32,0.10);
+    border-left:2px solid var(--amber);
+    font-family:'Share Tech Mono', monospace;
+    font-size:11px;
+    color:var(--amber);
+    letter-spacing:0.06em;
+    display:flex; align-items:center; gap:6px;
+  }
+  .hint-modal-warn .ico{
+    font-size:13px;
+    animation:warnBlink 1s infinite;
+  }
+  .hint-modal-warn b{
+    color:#fff;
+    font-weight:700;
+    font-size:12px;
+  }
+  .hint-modal-body{
+    padding:18px 16px;
+    font-family:'IBM Plex Sans KR', sans-serif;
+    font-size:15px;
+    line-height:1.7;
+    color:var(--text);
+    min-height:80px;
+    position:relative;
+  }
+  .hint-modal-body::before{
+    content:"";
+    position:absolute; left:14px; top:18px; bottom:18px;
+    width:3px;
+    background:linear-gradient(180deg, var(--magenta), transparent);
+  }
+  .hint-modal-body{
+    padding-left:30px;
+  }
+  .hm-ok{
+    display:block;
+    width:calc(100% - 28px);
+    margin:0 14px 14px;
+    padding:12px;
+    background:linear-gradient(135deg, rgba(255,43,214,0.2), rgba(0,240,255,0.15));
+    border:1.5px solid var(--magenta);
+    color:var(--magenta);
+    font-family:'Orbitron', sans-serif;
+    font-weight:700;
+    font-size:12px;
+    letter-spacing:0.22em;
+    cursor:pointer;
+    transition:all 0.2s;
+    text-shadow:0 0 8px rgba(255,43,214,0.5);
+  }
+  .hm-ok:active{
+    background:var(--magenta);
+    color:#fff;
+    text-shadow:none;
+    box-shadow:0 0 24px var(--magenta);
+  }
 </style>
 </head>
 <body>
@@ -1146,7 +1281,7 @@
       용의자 최종 <span class="accent">목적지</span> 식별
     </div>
     <div class="case-prompt">
-      용의자가 마지막으로 모습을 감춘 장소의 이름을 입력하시오.
+      용의자의 아지트를 특정하여 <b>장소의 이름</b>을 입력하시오.
     </div>
   </div>
 
@@ -1315,8 +1450,8 @@
       HINT SYSTEM · 힌트 시스템
     </div>
     <div class="hint-rule">
-      힌트는 <b>순서대로</b>만 확인할 수 있습니다.<br>
-      1번을 먼저 본 후 2번이 열리고, 2번을 본 후 3번이 열립니다.
+      자신의 차례를 소모하여 힌트를 확인 할 수 있습니다.<br>
+      반드시 <b>1번부터 차례대로</b> 확인해야 합니다.
     </div>
 
     <div class="hint-buttons">
@@ -1324,17 +1459,35 @@
         <span class="hint-no">01</span>
         <span class="hint-state">힌트 보기</span>
       </button>
-      <button class="hint-btn locked" data-hint="2" disabled>
+      <button class="hint-btn" data-hint="2">
         <span class="hint-no">02</span>
-        <span class="hint-state">🔒 잠김</span>
+        <span class="hint-state">힌트 보기</span>
       </button>
-      <button class="hint-btn locked" data-hint="3" disabled>
+      <button class="hint-btn" data-hint="3">
         <span class="hint-no">03</span>
-        <span class="hint-state">🔒 잠김</span>
+        <span class="hint-state">힌트 보기</span>
       </button>
     </div>
+  </div>
 
-    <div class="hint-display" id="hintDisplay"></div>
+  <!-- 힌트 팝업 -->
+  <div class="hint-modal" id="hintModal" hidden>
+    <div class="hint-modal-backdrop" id="hintBackdrop"></div>
+    <div class="hint-modal-box">
+      <div class="hint-modal-stripes"></div>
+      <div class="hint-modal-head">
+        <span class="hm-label" id="hmLabel">HINT 01</span>
+        <button class="hm-close" id="hmClose" aria-label="닫기">✕</button>
+      </div>
+      <div class="hint-modal-warn">
+        <span class="ico">⚠</span>
+        <span>본 힌트는 <b>1회용</b>입니다. 차례가 소모됩니다.</span>
+      </div>
+      <div class="hint-modal-body" id="hmBody">
+        힌트 내용이 여기 표시됩니다.
+      </div>
+      <button class="hm-ok" id="hmOk">확인 · CLOSE</button>
+    </div>
   </div>
 
   <!-- 푸터 티커 -->
@@ -1592,7 +1745,7 @@
     }
   });
 
-  // ====== 힌트 시스템 ======
+  // ====== 힌트 시스템 (모달 팝업) ======
   // ⚠ 게임에 맞게 힌트 내용을 여기서 수정하세요
   const HINTS = [
     '[ 힌트 1 내용을 여기에 작성하세요. ]',
@@ -1600,38 +1753,38 @@
     '[ 힌트 3 내용을 여기에 작성하세요. ]',
   ];
 
-  const hintDisplay = document.getElementById('hintDisplay');
   const hintBtns = document.querySelectorAll('.hint-btn');
+  const hintModal = document.getElementById('hintModal');
+  const hintBackdrop = document.getElementById('hintBackdrop');
+  const hmLabel = document.getElementById('hmLabel');
+  const hmBody = document.getElementById('hmBody');
+  const hmClose = document.getElementById('hmClose');
+  const hmOk = document.getElementById('hmOk');
+
+  function openHint(n){
+    hmLabel.textContent = `HINT ${String(n).padStart(2,'0')}`;
+    hmBody.textContent = HINTS[n-1];
+    hintModal.hidden = false;
+    if(navigator.vibrate) navigator.vibrate(30);
+  }
+  function closeHint(){
+    hintModal.hidden = true;
+  }
 
   hintBtns.forEach(btn => {
     btn.addEventListener('click', ()=>{
-      if(btn.disabled || btn.classList.contains('used')) return;
       const n = parseInt(btn.dataset.hint, 10);
-
-      // 현재 힌트 사용 처리
-      btn.classList.remove('locked');
-      btn.classList.add('used');
-      btn.querySelector('.hint-state').textContent = '✓ 확인됨';
-
-      // 힌트 내용 표시
-      const item = document.createElement('div');
-      item.className = 'hint-item';
-      item.innerHTML = `
-        <span class="hi-label">HINT ${String(n).padStart(2,'0')}</span>
-        <span class="hi-body">${HINTS[n-1]}</span>
-      `;
-      hintDisplay.appendChild(item);
-
-      // 다음 힌트 잠금 해제
-      const next = document.querySelector(`.hint-btn[data-hint="${n+1}"]`);
-      if(next){
-        next.disabled = false;
-        next.classList.remove('locked');
-        next.querySelector('.hint-state').textContent = '힌트 보기';
-      }
-
-      if(navigator.vibrate) navigator.vibrate(30);
+      openHint(n);
     });
+  });
+
+  hmClose.addEventListener('click', closeHint);
+  hmOk.addEventListener('click', closeHint);
+  hintBackdrop.addEventListener('click', closeHint);
+
+  // ESC 키로 모달 닫기
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && !hintModal.hidden) closeHint();
   });
 </script>
 </body>
