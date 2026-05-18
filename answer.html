@@ -548,10 +548,19 @@
     line-height:1.1;
   }
   .result .r-sub{
-    font-size:11.5px;
+    font-size:12.5px;
     color:var(--text-dim);
-    margin-top:8px;
-    letter-spacing:0.06em;
+    margin-top:10px;
+    letter-spacing:0.04em;
+    line-height:1.7;
+  }
+  .result .r-sub b{
+    color:var(--amber);
+    font-weight:700;
+    font-size:14px;
+    letter-spacing:0.08em;
+    text-shadow:0 0 8px rgba(255,176,32,0.6);
+    padding:0 2px;
   }
   .result.success{
     border-color:var(--green);
@@ -623,6 +632,410 @@
     .crest{padding:10px 14px}
     .badge{width:42px; height:42px}
     .case-title{font-size:18px}
+  }
+
+  /* ========================================
+     === 페이지 2: 장례식장 입구 추가 스타일 ===
+     ======================================== */
+
+  /* 페이지1 결과 박스의 이동하기 버튼 */
+  .travel-btn{
+    margin-top:14px;
+    width:100%;
+    padding:13px;
+    background:linear-gradient(135deg, var(--green), #00cc6a);
+    border:none;
+    color:#001020;
+    font-family:'Orbitron', sans-serif;
+    font-weight:900;
+    font-size:13px;
+    letter-spacing:0.22em;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 0 24px rgba(34,255,136,0.5);
+    transition:all 0.2s;
+    animation:btnPulse 1.6s ease-in-out infinite;
+  }
+  @keyframes btnPulse{
+    0%,100%{box-shadow:0 0 20px rgba(34,255,136,0.4)}
+    50%{box-shadow:0 0 32px rgba(34,255,136,0.85)}
+  }
+  .travel-btn:active{
+    transform:scale(0.98);
+    background:#fff;
+  }
+  .travel-btn .ico{margin-right:6px}
+
+  /* 이동 트랜지션 오버레이 */
+  .travel{
+    position:fixed; inset:0;
+    background:#000510;
+    z-index:99;
+    padding:20px 18px;
+    font-family:'Share Tech Mono', monospace;
+    color:var(--cyan-soft);
+    font-size:12.5px;
+    line-height:1.55;
+    overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+  .travel[hidden]{display:none}
+  .travel.show{animation:bootIn 0.3s}
+  .travel.hide{animation:bootOut 0.6s forwards}
+  @keyframes bootIn{
+    from{opacity:0; filter:blur(8px)}
+    to{opacity:1; filter:blur(0)}
+  }
+
+  /* 큰 경고 배너 (이동 트랜지션 마지막) */
+  .travel-warning{
+    margin-top:14px;
+    position:relative;
+    opacity:0;
+    animation:warnIn 0.4s 0.1s forwards;
+  }
+  .travel-warning[hidden]{display:none}
+  @keyframes warnIn{
+    0%{opacity:0; transform:scale(0.9)}
+    50%{opacity:1; transform:scale(1.04)}
+    100%{opacity:1; transform:scale(1)}
+  }
+  .warn-stripes{
+    height:14px;
+    background:repeating-linear-gradient(
+      135deg,
+      var(--red) 0 14px,
+      #000 14px 28px
+    );
+    animation:stripeSlide 0.6s linear infinite;
+  }
+  @keyframes stripeSlide{
+    from{background-position:0 0}
+    to{background-position:40px 0}
+  }
+  .warn-content{
+    padding:18px 14px;
+    background:linear-gradient(180deg, rgba(255,46,90,0.18), rgba(255,46,90,0.05));
+    border-left:3px solid var(--red);
+    border-right:3px solid var(--red);
+    text-align:center;
+    position:relative;
+  }
+  .warn-content::before{
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(circle, rgba(255,46,90,0.2), transparent 70%);
+    animation:warnPulse 1s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes warnPulse{
+    0%,100%{opacity:0.3}
+    50%{opacity:1}
+  }
+  .warn-ico{
+    font-size:32px;
+    color:var(--red);
+    text-shadow:0 0 14px var(--red);
+    animation:warnBlink 0.6s infinite;
+  }
+  @keyframes warnBlink{
+    0%,49%{opacity:1}
+    50%,100%{opacity:0.3}
+  }
+  .warn-title{
+    font-family:'Orbitron', sans-serif;
+    font-weight:900;
+    font-size:14px;
+    letter-spacing:0.3em;
+    color:var(--red);
+    margin:8px 0 10px;
+    text-shadow:0 0 10px rgba(255,46,90,0.7);
+  }
+  .warn-msg{
+    font-family:'IBM Plex Sans KR', sans-serif;
+    font-size:14px;
+    color:var(--text);
+    line-height:1.5;
+  }
+  .warn-msg b{
+    color:var(--amber);
+    font-family:'Black Han Sans', sans-serif;
+    font-size:20px;
+    letter-spacing:0.06em;
+  }
+
+  /* 페이지2 빨간 톤 상태 점 */
+  .dot-red{
+    background:var(--red);
+    box-shadow:0 0 8px var(--red);
+  }
+
+  /* 위치 헤더 */
+  .loc-header{
+    position:relative;
+    padding:18px 14px;
+    background:linear-gradient(180deg, rgba(255,46,90,0.10), rgba(0,15,35,0.6));
+    border:1px solid rgba(255,46,90,0.45);
+    overflow:hidden;
+    text-align:center;
+  }
+  .loc-header::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,46,90,0.04) 0 2px, transparent 2px 6px);
+    pointer-events:none;
+  }
+  .loc-header .corner{
+    position:absolute; width:14px; height:14px;
+    border:1.5px solid var(--red);
+  }
+  .loc-header .corner.tl{top:5px; left:5px; border-right:none; border-bottom:none}
+  .loc-header .corner.tr{top:5px; right:5px; border-left:none; border-bottom:none}
+  .loc-header .corner.bl{bottom:5px; left:5px; border-right:none; border-top:none}
+  .loc-header .corner.br{bottom:5px; right:5px; border-left:none; border-top:none}
+
+  .loc-tag{
+    font-family:'Share Tech Mono', monospace;
+    font-size:10.5px;
+    color:var(--red);
+    letter-spacing:0.22em;
+    margin-bottom:6px;
+    text-shadow:0 0 8px rgba(255,46,90,0.5);
+  }
+  .loc-name{
+    font-family:'Black Han Sans', sans-serif;
+    font-size:32px;
+    color:#fff;
+    letter-spacing:0.12em;
+    line-height:1;
+    text-shadow:
+      0 0 14px rgba(255,46,90,0.7),
+      0 0 28px rgba(255,46,90,0.4);
+    position:relative;
+  }
+  .loc-sub{
+    font-family:'Share Tech Mono', monospace;
+    font-size:10.5px;
+    color:var(--text-dim);
+    letter-spacing:0.14em;
+    margin-top:8px;
+  }
+
+  /* 경고 배너 (작은) */
+  .warn-banner{
+    display:flex; align-items:center; justify-content:center;
+    gap:10px;
+    padding:9px 12px;
+    background:
+      repeating-linear-gradient(
+        45deg,
+        rgba(255,176,32,0.12) 0 10px,
+        rgba(255,46,90,0.10) 10px 20px
+      );
+    border:1px solid var(--amber);
+    font-family:'Share Tech Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.08em;
+    color:var(--amber);
+    text-align:center;
+  }
+  .warn-banner .ico{
+    font-size:14px;
+    animation:warnBlink 0.8s infinite;
+  }
+
+  /* 페이지2 case-tab 빨간 톤 */
+  .case-tab.tab-red{
+    background:var(--red);
+    color:#fff;
+  }
+
+  /* 페이지2 강조 색 */
+  .case-title .accent2{
+    color:var(--red);
+    text-shadow:0 0 10px rgba(255,46,90,0.6);
+  }
+
+  /* 게임 규칙 박스 */
+  .rule-box{
+    margin-top:12px;
+    border:1px dashed rgba(255,176,32,0.5);
+    background:rgba(255,176,32,0.06);
+    padding:10px 12px;
+  }
+  .rule-head{
+    display:flex; align-items:center; gap:6px;
+    font-family:'Share Tech Mono', monospace;
+    font-size:10.5px;
+    color:var(--amber);
+    letter-spacing:0.16em;
+    margin-bottom:6px;
+  }
+  .rule-ico{color:var(--amber); font-size:13px}
+  .rule-body{
+    font-family:'IBM Plex Sans KR', sans-serif;
+    font-size:12.5px;
+    line-height:1.65;
+    color:var(--text);
+  }
+  .rule-body b{color:var(--cyan-soft); font-weight:700}
+  .rule-body b.warn-tx{color:var(--red); text-shadow:0 0 6px rgba(255,46,90,0.4)}
+
+  /* 페이지2 입력 영역 빨간 톤 */
+  .input-label.label-red{color:var(--red)}
+  .input-label.label-red::before{color:var(--amber)}
+
+  .answer-wrap.wrap-red::before,
+  .answer-wrap.wrap-red::after{
+    border-color:var(--amber);
+  }
+
+  .answer-field.field-red{
+    color:var(--red);
+    text-shadow:0 0 10px rgba(255,46,90,0.6);
+    border-color:rgba(255,46,90,0.5);
+    caret-color:var(--amber);
+    text-transform:uppercase;
+    letter-spacing:0.18em;
+  }
+  .answer-field.field-red::placeholder{
+    color:var(--text-dim);
+    text-transform:none;
+    letter-spacing:0.04em;
+  }
+  .answer-field.field-red:focus{
+    border-color:var(--red);
+    background:rgba(80,10,20,0.4);
+    box-shadow:
+      0 0 20px rgba(255,46,90,0.35),
+      inset 0 0 20px rgba(255,46,90,0.12);
+  }
+  .answer-field.field-red:not(:placeholder-shown){
+    border-color:var(--amber);
+  }
+
+  .submit-btn.submit-red{
+    background:linear-gradient(135deg, rgba(255,46,90,0.18), rgba(255,176,32,0.18));
+    border-color:var(--red);
+    color:var(--red);
+    text-shadow:0 0 8px rgba(255,46,90,0.6);
+  }
+  .submit-btn.submit-red:active{
+    background:var(--red);
+    color:#fff;
+    text-shadow:none;
+    box-shadow:0 0 24px var(--red);
+  }
+
+  /* 힌트 시스템 */
+  .hint-section{
+    background:var(--panel);
+    border:1px solid var(--line-strong);
+    padding:14px;
+    position:relative;
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+  }
+  .hint-head{
+    display:flex; align-items:center; gap:8px;
+    font-family:'Orbitron', sans-serif;
+    font-weight:700;
+    font-size:12px;
+    color:var(--magenta);
+    letter-spacing:0.16em;
+    margin-bottom:8px;
+    text-shadow:0 0 8px rgba(255,43,214,0.5);
+  }
+  .hint-head .ico{font-size:14px}
+  .hint-rule{
+    font-family:'IBM Plex Sans KR', sans-serif;
+    font-size:12px;
+    line-height:1.6;
+    color:var(--text-dim);
+    padding:8px 10px;
+    background:rgba(0,0,0,0.3);
+    border-left:2px solid var(--magenta);
+    margin-bottom:12px;
+  }
+  .hint-rule b{color:var(--cyan-soft); font-weight:700}
+
+  .hint-buttons{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:6px;
+    margin-bottom:10px;
+  }
+  .hint-btn{
+    padding:10px 6px;
+    background:rgba(0,15,35,0.7);
+    border:1.5px solid var(--magenta);
+    color:var(--magenta);
+    font-family:'Share Tech Mono', monospace;
+    cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    transition:all 0.2s;
+    text-shadow:0 0 6px rgba(255,43,214,0.5);
+  }
+  .hint-btn .hint-no{
+    font-family:'Orbitron', sans-serif;
+    font-weight:900;
+    font-size:18px;
+    letter-spacing:0.06em;
+  }
+  .hint-btn .hint-state{
+    font-size:10px;
+    letter-spacing:0.1em;
+  }
+  .hint-btn:active:not(:disabled){
+    background:var(--magenta);
+    color:#fff;
+    text-shadow:none;
+  }
+  .hint-btn.locked{
+    background:rgba(20,25,40,0.6);
+    border-color:rgba(107,138,168,0.3);
+    color:var(--text-dim);
+    text-shadow:none;
+    cursor:not-allowed;
+  }
+  .hint-btn.used{
+    background:rgba(255,43,214,0.12);
+    border-color:rgba(255,43,214,0.5);
+    color:var(--text);
+    text-shadow:none;
+  }
+  .hint-btn.used .hint-state{color:var(--cyan-soft)}
+
+  .hint-display{
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .hint-item{
+    border-left:3px solid var(--magenta);
+    background:rgba(255,43,214,0.06);
+    padding:10px 12px;
+    font-family:'IBM Plex Sans KR', sans-serif;
+    font-size:13px;
+    line-height:1.55;
+    color:var(--text);
+    animation:hintIn 0.4s;
+    position:relative;
+  }
+  @keyframes hintIn{
+    from{opacity:0; transform:translateX(-8px); filter:blur(3px)}
+    to{opacity:1; transform:translateX(0); filter:blur(0)}
+  }
+  .hint-item .hi-label{
+    display:block;
+    font-family:'Share Tech Mono', monospace;
+    font-size:10.5px;
+    color:var(--magenta);
+    letter-spacing:0.16em;
+    margin-bottom:4px;
+  }
+  .hint-item .hi-body{
+    color:var(--text);
   }
 </style>
 </head>
@@ -765,6 +1178,9 @@
       <div class="r-label" id="rLabel"></div>
       <div class="r-msg" id="rMsg"></div>
       <div class="r-sub" id="rSub"></div>
+      <button class="travel-btn" id="travelBtn" hidden>
+        <span class="ico">▶▶</span>이동하기 · PROCEED
+      </button>
     </div>
   </div>
 
@@ -774,6 +1190,158 @@
     <div class="stream">
       <div class="stream-inner">
         ▸ ENCRYPTED TUNNEL OK ▸ 신호 강도 98% ▸ 외부 침입 시도 0건 ▸ 데이터 무결성 검증 완료 ▸ 추적 위성 K-SAT-4 동기화 ▸ 사건 파일 #2087-K-9931 활성 ▸ 본 단말기의 모든 활동은 기록됩니다 ▸
+      </div>
+    </div>
+    <span class="end">REC ●</span>
+  </div>
+</div>
+
+<!-- ===== 이동 트랜지션 ===== -->
+<div class="travel" id="travel" hidden>
+  <div class="scan-line"></div>
+  <div class="boot-head">
+    <div><span class="tag">[ VEHICLE LINK ]</span></div>
+    <div>ROUTE-α <span class="blink">█</span></div>
+  </div>
+  <div class="boot-logo">DESTINATION TRANSIT // 자율주행 이동</div>
+  <div class="boot-log" id="travelLog"></div>
+
+  <div class="travel-warning" id="travelWarning" hidden>
+    <div class="warn-stripes"></div>
+    <div class="warn-content">
+      <div class="warn-ico">⚠</div>
+      <div class="warn-title">WARNING · 경고</div>
+      <div class="warn-msg">위험 구역 진입<br><b>장례식장</b> 도착</div>
+    </div>
+    <div class="warn-stripes"></div>
+  </div>
+</div>
+
+<!-- ===== 페이지 2: 장례식장 입구 ===== -->
+<div class="terminal page2" id="terminal2" hidden>
+
+  <!-- 상단 상태바 -->
+  <div class="topbar">
+    <div class="left">
+      <span class="dot dot-red"></span>
+      <span>RESTRICTED · 출입 통제 구역</span>
+    </div>
+    <div class="right">
+      <span id="clock2">--:--:--</span>
+    </div>
+  </div>
+
+  <!-- 위치 헤더 -->
+  <div class="loc-header">
+    <span class="corner tl"></span>
+    <span class="corner tr"></span>
+    <span class="corner bl"></span>
+    <span class="corner br"></span>
+    <div class="loc-tag">CURRENT LOCATION</div>
+    <div class="loc-name">장례식장</div>
+    <div class="loc-sub">FUNERAL HALL · 출입 인증 단말</div>
+  </div>
+
+  <!-- 경고 배너 -->
+  <div class="warn-banner">
+    <span class="ico">⚠</span>
+    <span class="txt">진입 인증 필요 · 무단 출입 시 추적 신호 송출</span>
+    <span class="ico">⚠</span>
+  </div>
+
+  <!-- 안내 카드 -->
+  <div class="case">
+    <div class="case-tab tab-red">ACCESS GATE</div>
+    <div class="case-head">
+      <span>GATE NO. <span class="num">#G-7F</span></span>
+      <span>CLASSIFIED</span>
+    </div>
+    <div class="case-title">
+      장례식장 <span class="accent2">입장 인증</span>
+    </div>
+    <div class="case-prompt">
+      장례식장에 입장하기 위해서는 <b>비밀번호</b>가 필요합니다.
+    </div>
+
+    <div class="rule-box">
+      <div class="rule-head">
+        <span class="rule-ico">⛬</span>
+        <span>게임 규칙 · GAME RULE</span>
+      </div>
+      <div class="rule-body">
+        목적지를 맞춘 <b>정답자</b>가 <b>먼저 입력</b>합니다.<br>
+        오답일 경우 <b class="warn-tx">상대에게 기회가 넘어갑니다.</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- 비밀번호 입력 -->
+  <div class="input-section">
+    <div class="input-label label-red">
+      PASSWORD INPUT · 비밀번호 입력
+    </div>
+
+    <div class="answer-wrap wrap-red">
+      <input
+        class="answer-field field-red"
+        id="password"
+        type="text"
+        inputmode="text"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="characters"
+        spellcheck="false"
+        placeholder="비밀번호를 입력하세요..."
+        aria-label="비밀번호 입력"
+      />
+    </div>
+
+    <button class="submit-btn submit-red" id="pwSubmit" disabled>
+      <span class="ico">▶</span>출입 인증 · AUTHENTICATE
+    </button>
+
+    <div class="result" id="pwResult">
+      <div class="r-label" id="pwLabel"></div>
+      <div class="r-msg" id="pwMsg"></div>
+      <div class="r-sub" id="pwSub"></div>
+    </div>
+  </div>
+
+  <!-- 힌트 시스템 -->
+  <div class="hint-section">
+    <div class="hint-head">
+      <span class="ico">◈</span>
+      HINT SYSTEM · 힌트 시스템
+    </div>
+    <div class="hint-rule">
+      힌트는 <b>순서대로</b>만 확인할 수 있습니다.<br>
+      1번을 먼저 본 후 2번이 열리고, 2번을 본 후 3번이 열립니다.
+    </div>
+
+    <div class="hint-buttons">
+      <button class="hint-btn" data-hint="1">
+        <span class="hint-no">01</span>
+        <span class="hint-state">힌트 보기</span>
+      </button>
+      <button class="hint-btn locked" data-hint="2" disabled>
+        <span class="hint-no">02</span>
+        <span class="hint-state">🔒 잠김</span>
+      </button>
+      <button class="hint-btn locked" data-hint="3" disabled>
+        <span class="hint-no">03</span>
+        <span class="hint-state">🔒 잠김</span>
+      </button>
+    </div>
+
+    <div class="hint-display" id="hintDisplay"></div>
+  </div>
+
+  <!-- 푸터 티커 -->
+  <div class="ticker">
+    <span>SYS</span>
+    <div class="stream">
+      <div class="stream-inner">
+        ▸ 출입 통제 시스템 활성 ▸ 비밀번호 인증 대기 중 ▸ CCTV-12대 감시 중 ▸ 비인가 접근 자동 신고 ▸ 본 게이트의 모든 시도는 기록됩니다 ▸
       </div>
     </div>
     <span class="end">REC ●</span>
@@ -830,6 +1398,7 @@
   const rLabel = document.getElementById('rLabel');
   const rMsg = document.getElementById('rMsg');
   const rSub = document.getElementById('rSub');
+  const travelBtn = document.getElementById('travelBtn');
 
   function sync(){
     const v = input.value.trim();
@@ -837,6 +1406,7 @@
     // 입력 변경 시 결과 숨기기
     if(result.classList.contains('show')){
       result.classList.remove('show','success','error');
+      travelBtn.hidden = true;
     }
   }
   input.addEventListener('input', sync);
@@ -856,11 +1426,13 @@
     if(ok){
       rLabel.textContent = '▸ MATCH FOUND // 일치';
       rMsg.textContent = '정답입니다';
-      rSub.textContent = '증거 채택 완료 · 사건 진행 권한 부여됨';
+      rSub.innerHTML = '정답자는 <b>승점 2점</b>을 획득합니다.<br>후에 <b>장례식장</b>으로 이동합니다.';
+      travelBtn.hidden = false;
     } else {
       rLabel.textContent = '▸ NO MATCH // 불일치';
       rMsg.textContent = '오답입니다';
-      rSub.textContent = '증거 거부됨 · 다시 확인 후 재입력 요망';
+      rSub.innerHTML = '증거 거부됨 · 다시 확인 후 재입력 요망';
+      travelBtn.hidden = true;
     }
     // 폰 햅틱 (지원 기기)
     if(navigator.vibrate){
@@ -891,6 +1463,175 @@
     if(now - lastTouch <= 300) e.preventDefault();
     lastTouch = now;
   }, {passive:false});
+
+  // ========================================
+  // === 페이지 2: 장례식장 입구 로직 ===
+  // ========================================
+
+  const travel = document.getElementById('travel');
+  const travelLog = document.getElementById('travelLog');
+  const travelWarning = document.getElementById('travelWarning');
+  const terminal = document.getElementById('terminal');
+  const terminal2 = document.getElementById('terminal2');
+
+  // 이동하기 버튼 클릭
+  travelBtn.addEventListener('click', ()=>{
+    if(navigator.vibrate) navigator.vibrate(50);
+    startTravel();
+  });
+
+  function startTravel(){
+    travel.hidden = false;
+    travel.classList.add('show');
+    travelLog.innerHTML = '';
+    travelWarning.hidden = true;
+
+    const tLogs = [
+      '> 차량 자율주행 모드 활성화...',
+      '> 목적지 입력 ............................... <span class="ic">장례식장</span>',
+      '> 경로 계산 중 .............................. <span class="ok">[ OK ]</span>',
+      '> GPS 위장 신호 송출 ........................ <span class="ok">[ OK ]</span>',
+      '> 차량 락다운 · 외부 통신 차단 ............... <span class="ok">[ OK ]</span>',
+      '> 추적 회피 루트 진입 ....................... <span class="warn">[ STEALTH ]</span>',
+      '> ETA: <span class="ic">00:00:08</span>',
+      '> <span class="dim">목적지 접근 중...</span>',
+    ];
+
+    let ti = 0;
+    function tPush(){
+      if(ti >= tLogs.length){
+        // 경고 표시
+        setTimeout(()=>{
+          travelWarning.hidden = false;
+          if(navigator.vibrate) navigator.vibrate([100,50,100,50,150]);
+          // 페이지 전환
+          setTimeout(()=>{
+            travel.classList.add('hide');
+            setTimeout(()=>{
+              travel.hidden = true;
+              travel.classList.remove('show','hide');
+              terminal.hidden = true;
+              terminal2.hidden = false;
+              window.scrollTo({top:0, behavior:'instant'});
+            }, 600);
+          }, 1800);
+        }, 350);
+        return;
+      }
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      line.innerHTML = tLogs[ti];
+      travelLog.appendChild(line);
+      ti++;
+      setTimeout(tPush, 240 + Math.random()*80);
+    }
+    tPush();
+  }
+
+  // ====== 페이지2: 시계 ======
+  function tick2(){
+    const d = new Date();
+    const z = n => String(n).padStart(2,'0');
+    document.getElementById('clock2').textContent = `${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}`;
+  }
+  setInterval(tick2, 1000);
+  tick2();
+
+  // ====== 페이지2: 비밀번호 입력 ======
+  const pwInput = document.getElementById('password');
+  const pwSubmit = document.getElementById('pwSubmit');
+  const pwResult = document.getElementById('pwResult');
+  const pwLabel = document.getElementById('pwLabel');
+  const pwMsg = document.getElementById('pwMsg');
+  const pwSub = document.getElementById('pwSub');
+
+  const PASSWORD = 'SEED';
+
+  function pwSync(){
+    const v = pwInput.value.trim();
+    pwSubmit.disabled = v.length === 0;
+    if(pwResult.classList.contains('show')){
+      pwResult.classList.remove('show','success','error');
+    }
+  }
+  pwInput.addEventListener('input', pwSync);
+  pwInput.addEventListener('compositionupdate', pwSync);
+  pwInput.addEventListener('compositionend', pwSync);
+  pwSync();
+
+  function showPwResult(ok){
+    pwResult.classList.remove('success','error');
+    void pwResult.offsetWidth;
+    pwResult.classList.add('show', ok ? 'success' : 'error');
+    if(ok){
+      pwLabel.textContent = '▸ ACCESS GRANTED // 인증 완료';
+      pwMsg.textContent = '정답입니다';
+      pwSub.innerHTML = '장례식장 출입이 <b>승인</b>되었습니다.';
+    } else {
+      pwLabel.textContent = '▸ ACCESS DENIED // 인증 거부';
+      pwMsg.textContent = '오답입니다';
+      pwSub.innerHTML = '비밀번호 불일치 · <b>상대 플레이어</b>에게 기회가 넘어갑니다.';
+    }
+    if(navigator.vibrate){
+      navigator.vibrate(ok ? [40,30,40] : [120]);
+    }
+  }
+
+  pwSubmit.addEventListener('click', ()=>{
+    if(pwSubmit.disabled) return;
+    const v = pwInput.value.trim().toUpperCase();
+    showPwResult(v === PASSWORD);
+    setTimeout(()=> pwResult.scrollIntoView({behavior:'smooth', block:'center'}), 80);
+  });
+
+  pwInput.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter' && !pwSubmit.disabled){
+      e.preventDefault();
+      pwSubmit.click();
+    }
+  });
+
+  // ====== 힌트 시스템 ======
+  // ⚠ 게임에 맞게 힌트 내용을 여기서 수정하세요
+  const HINTS = [
+    '[ 힌트 1 내용을 여기에 작성하세요. ]',
+    '[ 힌트 2 내용을 여기에 작성하세요. ]',
+    '[ 힌트 3 내용을 여기에 작성하세요. ]',
+  ];
+
+  const hintDisplay = document.getElementById('hintDisplay');
+  const hintBtns = document.querySelectorAll('.hint-btn');
+
+  hintBtns.forEach(btn => {
+    btn.addEventListener('click', ()=>{
+      if(btn.disabled || btn.classList.contains('used')) return;
+      const n = parseInt(btn.dataset.hint, 10);
+
+      // 현재 힌트 사용 처리
+      btn.classList.remove('locked');
+      btn.classList.add('used');
+      btn.querySelector('.hint-state').textContent = '✓ 확인됨';
+
+      // 힌트 내용 표시
+      const item = document.createElement('div');
+      item.className = 'hint-item';
+      item.innerHTML = `
+        <span class="hi-label">HINT ${String(n).padStart(2,'0')}</span>
+        <span class="hi-body">${HINTS[n-1]}</span>
+      `;
+      hintDisplay.appendChild(item);
+
+      // 다음 힌트 잠금 해제
+      const next = document.querySelector(`.hint-btn[data-hint="${n+1}"]`);
+      if(next){
+        next.disabled = false;
+        next.classList.remove('locked');
+        next.querySelector('.hint-state').textContent = '힌트 보기';
+      }
+
+      if(navigator.vibrate) navigator.vibrate(30);
+    });
+  });
 </script>
 </body>
 </html>
