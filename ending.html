@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#000510">
+<title>POLICE // FINAL PROTOCOL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&family=IBM+Plex+Sans+KR:wght@300;500;700&family=Black+Han+Sans&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#000510;
+    --bg-2:#020a1c;
+    --panel:rgba(8,18,38,0.72);
+    --line:rgba(0,240,255,0.18);
+    --line-strong:rgba(0,240,255,0.55);
+    --cyan:#00f0ff;
+    --cyan-soft:#5ce8ff;
+    --amber:#ffb020;
+    --red:#ff2e5a;
+    --green:#22ff88;
+    --magenta:#ff2bd6;
+    --text:#cfeaff;
+    --text-dim:#6b8aa8;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  [hidden]{display:none !important}
+  html, body{
+    height:100%;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans KR','Share Tech Mono',monospace;
+    overflow-x:hidden;
+    overscroll-behavior:none;
+  }
+  body{
+    position:relative;
+    min-height:100vh;
+    min-height:100dvh;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255,46,90,0.20), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 50% 110%, rgba(255,43,214,0.12), transparent 70%),
+      linear-gradient(180deg, #000510 0%, #02091c 60%, #000510 100%);
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(255,46,90,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,46,90,0.04) 1px, transparent 1px);
+    background-size:32px 32px;
+    mask-image:radial-gradient(ellipse at 50% 50%, black 30%, transparent 80%);
+    -webkit-mask-image:radial-gradient(ellipse at 50% 50%, black 30%, transparent 80%);
+    pointer-events:none;
+    z-index:1;
+  }
+  body::after{
+    content:"";
+    position:fixed; inset:0;
+    background:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 1px, transparent 1px, transparent 3px);
+    pointer-events:none;
+    z-index:50;
+    mix-blend-mode:multiply;
+    animation:flicker 6s infinite;
+  }
+  @keyframes flicker{
+    0%,96%,100%{opacity:1}
+    97%{opacity:0.75}
+    98%{opacity:1}
+    98.5%{opacity:0.6}
+    99%{opacity:1}
+  }
+
+  /* ===== 부팅 ===== */
+  .boot{
+    position:fixed; inset:0;
+    background:#000510;
+    z-index:100;
+    padding:20px 18px;
+    font-family:'Share Tech Mono', monospace;
+    color:var(--cyan-soft);
+    font-size:12.5px;
+    line-height:1.55;
+    overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+  .boot.hide{animation:bootOut 0.6s forwards}
+  @keyframes bootOut{
+    0%{opacity:1; filter:blur(0) brightness(1)}
+    30%{opacity:1; filter:blur(0) brightness(2.4)}
+    100%{opacity:0; filter:blur(8px) brightness(0); visibility:hidden}
+  }
+  .boot-head{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    border-bottom:1px solid var(--line);
+    padding-bottom:10px; margin-bottom:14px;
+    font-size:10.5px;
+    letter-spacing:0.08em;
+    color:var(--text-dim);
+  }
+  .boot-head .tag{color:var(--red)}
+  .boot-head .blink{animation:blink 0.9s infinite}
+  @keyframes blink{50%{opacity:0}}
+  .boot-logo{
+    font-family:'Orbitron', sans-serif;
+    color:var(--red);
+    font-size:14px;
+    letter-spacing:0.22em;
+    font-weight:700;
+    text-shadow:0 0 12px rgba(255,46,90,0.7);
+  }
+  .boot-log{flex:1; overflow:hidden}
+  .log-line{
+    opacity:0;
+    transform:translateX(-6px);
+    animation:logIn 0.18s forwards;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .log-line .ok{color:var(--green)}
+  .log-line .warn{color:var(--amber)}
+  .log-line .dim{color:var(--text-dim)}
+  .log-line .ic{color:var(--magenta)}
+  .log-line .danger{color:var(--red)}
+  @keyframes logIn{
+    to{opacity:1; transform:translateX(0)}
+  }
+  .boot-progress{
+    margin-top:12px;
+    border:1px solid rgba(255,46,90,0.5);
+    padding:10px 12px;
+    background:rgba(60,0,15,0.3);
+    opacity:0;
+    animation:logIn 0.3s forwards;
+    animation-delay:2.4s;
+  }
+  .bp-label{
+    font-size:10.5px;
+    color:var(--text-dim);
+    display:flex; justify-content:space-between;
+    margin-bottom:8px;
+    letter-spacing:0.06em;
+  }
+  .bp-label b{color:var(--red); font-weight:normal}
+  .bar{
+    height:6px;
+    background:rgba(255,46,90,0.08);
+    border:1px solid rgba(255,46,90,0.25);
+    position:relative; overflow:hidden;
+  }
+  .bar-fill{
+    position:absolute; left:0; top:0; bottom:0;
+    width:0%;
+    background:linear-gradient(90deg, var(--red), var(--amber));
+    box-shadow:0 0 12px var(--red);
+    animation:fill 2.6s cubic-bezier(0.6, 0, 0.2, 1) forwards;
+    animation-delay:2.5s;
+  }
+  @keyframes fill{
+    0%{width:0%}
+    40%{width:38%}
+    55%{width:42%}
+    100%{width:100%}
+  }
+  .bar-fill::after{
+    content:"";
+    position:absolute; right:0; top:0; bottom:0; width:20px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.7));
+  }
+  .boot-foot{
+    margin-top:14px;
+    font-size:10px;
+    color:var(--text-dim);
+    text-align:center;
+    letter-spacing:0.15em;
+    opacity:0;
+    animation:logIn 0.3s forwards;
+    animation-delay:4.5s;
+  }
+  .boot-foot b{color:var(--red)}
+  .scan-line{
+    position:absolute; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, transparent, var(--red), transparent);
+    box-shadow:0 0 18px var(--red);
+    top:0;
+    animation:scan 2.2s linear infinite;
+    opacity:0.7;
+  }
+  @keyframes scan{
+    0%{top:0}
+    100%{top:100%}
+  }
+
+  /* ===== 메인 단말기 공통 ===== */
+  .terminal{
+    position:relative;
+    z-index:2;
+    min-height:100vh;
+    min-height:100dvh;
+    padding:14px 14px 28px;
+    display:flex; flex-direction:column;
+    gap:14px;
+    max-width:520px;
+    margin:0 auto;
+  }
+  .terminal.show{animation:terminalIn 0.5s 0.05s both}
+  @keyframes terminalIn{
+    from{opacity:0; transform:translateY(8px)}
+    to{opacity:1; transform:translateY(0)}
+  }
+
+  /* 상단바 */
+  .topbar{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'Share Tech Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.1em;
+    color:var(--text-dim);
+    padding-bottom:8px;
+    border-bottom:1px solid var(--line);
+  }
+  .topbar .left{display:flex; gap:10px; align-items:center}
+  .dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--red);
+    box-shadow:0 0 8px var(--red);
+    animation:pulse 1.4s infinite;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:1; transform:scale(1)}
+    50%{opacity:0.4; transform:scale(0.7)}
+  }
+  .topbar .right{display:flex; gap:8px; color:var(--amber)}
+
+  /* 위치/타이틀 헤더 (붉은 톤) */
+  .crest{
+    position:relative;
+    border:1px solid rgba(255,46,90,0.55);
+    background:linear-gradient(180deg, rgba(60,0,15,0.55), rgba(15,0,5,0.6));
+    padding:18px 16px 16px;
+    overflow:hidden;
+  }
+  .crest::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 80% 0%, rgba(255,46,90,0.20), transparent 60%),
+      radial-gradient(circle at 0% 100%, rgba(255,43,214,0.10), transparent 60%);
+    pointer-events:none;
+  }
+  .crest .corner{
+    position:absolute; width:14px; height:14px;
+    border:1.5px solid var(--red);
+  }
+  .crest .corner.tl{top:5px; left:5px; border-right:none; border-bottom:none}
+  .crest .corner.tr{top:5px; right:5px; border-left:none; border-bottom:none}
+  .crest .corner.bl{bottom:5px; left:5px; border-right:none; border-top:none}
+  .crest .corner.br{bottom:5px; right:5px; border-left:none; border-top:none}
+  .crest-row{
+    display:flex; align-items:center; gap:14px;
+    position:relative;
+  }
+  .badge{
+    width:56px; height:56px;
+    flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .badge svg{width:100%; height:100%; filter:drop-shadow(0 0 6px var(--red))}
+  .crest-text .title{
+    font-family:'Orbitron', sans-serif;
+    font-weight:900;
+    font-size:15px;
+    letter-spacing:0.18em;
+    color:var(--red);
+    text-shadow:0 0 10px rgba(255,46,90,0.6);
+    line-height:1;
+  }
+  .crest-text .sub{
+    font-family:'IBM Plex Sans KR', sans-serif;
+    font-weight:500;
+    font-size:13.5px;
+    margin-top:6px;
+    color:var(--text);
+    letter-spacing:0.04em;
+  }
+  .crest-text .div{
+    font-family:'Share Tech Mono', monospace;
+    font-size:10px;
+    margin-top:4px;
+    color:var(--amber);
+    letter-spacing:0.12em;
+  }
+
+  /* 케이스 카드 */
+  .case{
+    background:var(--panel);
+    border:1px solid rgba(255,46,90,0.4);
+    padding:14px 14px 16px;
+    position:relative;
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+  }
+  .case-tab{
+    position:absolute; top:-1px; left:14px;
+    transform:translateY(-100%);
+    background:var(--red);
+    color:#fff;
+    font-family:'Orbitron', sans-serif;
+    font-weight:700;
+    font-size:9.5px;
+    padding:3px 10px;
+    letter-spacing:0.18em;
+  }
+  .case-head{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'Share Tech Mono', monospace;
+    font-size:10.5px;
+    color:var(--text-dim);
+    margin-bottom:10px;
+    letter-spacing:0.08em;
+  }
+  .case-head .num{color:var(--red)}
+  .case-title{
+    font-family:'Black Han Sans', sans-serif;
+    font-size:22px;
+    color:var(--text);
+    line-height:1.15;
+    letter-spacing:0.02em;
+    margin-bottom:10px;
+  }
+  .case-title .accent{color:var(--red); text-shadow:0 0 8px rgba(255,46,90,0.5)}
+  .case-title .accent-a{color:var(--amber); text-shadow:0 0 8px rgba(255,176,32,0.5)}
+  .case-title .accent-c{color:var(--cyan); text-shadow:0 0 8px rgba(0,240,255,0.5)}
+
+  /* 룰 박스 (브리핑) */
+  .rules{
+    display:flex; flex-direction:column;
+    gap:8px;
+    font-family:'IBM Plex Sans KR', sans-serif;
+    font-size:13px;
+    line-height:1.65;
+    color:var(--text);
+  }
+  .rules-intro{
+    padding:10px 12px;
+    background:rgba(255,46,90,0.08);
+    border:1px solid rgba(255,46,90,0.4);
+    color:var(--text);
+    font-size:13.5px;
+    text-align:center;
+  }
+  .rules-intro b{
+    color:var(--amber);
+    font-weight:700;
+    text-shadow:0 0 6px rgba(255,176,32,0.4);
+  }
+  .rules-intro .vs{
+    display:inline-block;
+    padding:0 8px;
+    color:var(--red);
+    font-family:'Orbitron', sans-serif;
+    font-weight:900;
+    font-size:14px;
+    letter-spacing:0.18em;
+    text-shadow:0 0 8px rgba(255,46,90,0.5);
+  }
+  .rule-line{
+    padding:8px 10px 8px 36px;
+    background:rgba(0,0,0,0.3);
+    border-left:2px solid var(--cyan);
+    position:relative;
+  }
+  .rule-line .num{
+    position:absolute;
+    left:8px; top:8px;
+    font-family:'Orbitron', sans-serif;
+    font-weight:900;
+    color:var(--cyan);
+    font-size:13px;
+    letter-spacing:0.06em;
+    text-shadow:0 0 6px rgba(0,240,255,0.5);
+  }
+  .rule-line b{
+    color:var(--cyan-soft);
+    font-weight:700;
+  }
+  .rule-line.danger{border-left-color:var(--red)}
+  .rule-line.danger .num{color:var(--red); text-shadow:0 0 6px rgba(255,46,90,0.5)}
+  .rule-line.danger b{color:var(--red)}
+  .rule-line.safe{border-left-color:var(--green)}
+  .rule-line.safe .num{color:var(--green); text-shadow:0 0 6px rgba(34,255,136,0.5)}
+  .rule-line.safe b{color:var(--green)}
+
+  .rule-final{
+    padding:10px 12px;
+    background:linear-gradient(135deg, rgba(255,176,32,0.10), rgba(255,46,90,0.10));
+    border:1px dashed var(--amber);
+    text-align:center;
+    color:var(--amber);
+    font-weight:500;
+    font-size:13px;
+  }
+  .rule-final b{color:#fff; font-weight:700}
+
+  .luck{
+    text-align:center;
+    font-family:'Black Han Sans', sans-serif;
+    font-size:22px;
+    letter-spacing:0.06em;
+    margin-top:4px;
+    color:var(--red);
+    text-shadow:0 0 14px rgba(255,46,90,0.6), 0 0 28px rgba(255,46,90,0.3);
+    animation:luckGlow 2s ease-in-out infinite;
+  }
+  @keyframes luckGlow{
+    0%,100%{text-shadow:0 0 14px rgba(255,46,90,0.6), 0 0 28px rgba(255,46,90,0.3)}
+    50%{text-shadow:0 0 20px rgba(255,46,90,0.9), 0 0 40px rgba(255,46,90,0.5)}
+  }
+
+  /* 큰 액션 버튼 */
+  .big-btn{
+    width:100%;
+    padding:16px;
+    background:linear-gradient(135deg, rgba(255,46,90,0.20), rgba(255,176,32,0.20));
+    border:1.5px solid var(--red);
+    color:var(--red);
+    font-family:'Orbitron', sans-serif;
+    font-weight:900;
+    font-size:14px;
+    letter-spacing:0.24em;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    text-shadow:0 0 8px rgba(255,46,90,0.6);
+    transition:all 0.2s;
+  }
+  .big-btn::before{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(120deg, transparent, rgba(255,46,90,0.4), transparent);
+    transform:translateX(-100%);
+    transition:transform 0.5s;
+  }
+  .big-btn:active{
+    background:var(--red);
+    color:#fff;
+    text-shadow:none;
+    box-shadow:0 0 24px var(--red);
+  }
+  .big-btn:active::before{transform:translateX(100%)}
+  .big-btn .ico{margin-right:6px}
+
+  /* 플레이어 선택 */
+  .player-pick{
+    display:grid; grid-template-columns:1fr 1fr; gap:10px;
+  }
+  .player-card{
+    padding:18px 12px;
+    background:rgba(0,15,35,0.7);
+    border:1.5px solid var(--cyan);
+    color:var(--cyan);
+    cursor:pointer;
+    text-align:center;
+    transition:all 0.2s;
+    position:relative;
+    overflow:hidden;
+  }
+  .player-card::before{
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:2px;
+    background:var(--cyan);
+    box-shadow:0 0 10px var(--cyan);
+  }
+  .player-card.b::before{background:var(--magenta); box-shadow:0 0 10px var(--magenta)}
+  .player-card.b{border-color:var(--magenta); color:var(--magenta)}
+  .player-card .p-tag{
+    font-family:'Share Tech Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.18em;
+    margin-bottom:6px;
+    opacity:0.8;
+  }
+  .player-card .p-name{
+    font-family:'Black Han Sans', sans-serif;
+    font-size:26px;
+    letter-spacing:0.08em;
+    text-shadow:0 0 12px currentColor;
+    line-height:1;
+  }
+  .player-card .p-sub{
+    font-family:'Share Tech Mono', monospace;
+    font-size:10px;
+    margin-top:8px;
+    color:var(--text-dim);
+    letter-spacing:0.08em;
+  }
+  .player-card:active{
+    background:currentColor;
+    color:#fff;
+  }
+  .player-card:active .p-name,
+  .player-card:active .p-tag,
+  .player-card:active .p-sub{color:#fff}
+
+  /* === 게임 화면 === */
+  .turn-header{
+    text-align:center;
+    padding:18px 14px;
+    background:linear-gradient(180deg, rgba(0,240,255,0.10), rgba(0,15,35,0.5));
+    border:1.5px solid var(--cyan);
+    position:relative;
+    overflow:hidden;
+  }
+  .turn-header.magenta{
+    background:linear-gradient(180deg, rgba(255,43,214,0.10), rgba(15,0,15,0.5));
+    border-color:var(--magenta);
+  }
+  .turn-header .t-label{
+    font-family:'Share Tech Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.22em;
+    color:var(--cyan);
+    margin-bottom:6px;
+    text-shadow:0 0 6px rgba(0,240,255,0.5);
+  }
+  .turn-header.magenta .t-label{
+    color:var(--magenta);
+    text-shadow:0 0 6px rgba(255,43,214,0.5);
+  }
+  .turn-header .t-name{
+    font-family:'Black Han Sans', sans-serif;
+    font-size:36px;
+    letter-spacing:0.1em;
+    color:#fff;
+    text-shadow:0 0 18px var(--cyan), 0 0 36px rgba(0,240,255,0.5);
+    line-height:1;
+  }
+  .turn-header.magenta .t-name{
+    text-shadow:0 0 18px var(--magenta), 0 0 36px rgba(255,43,214,0.5);
+  }
+  .turn-header .t-sub{
+    font-family:'IBM Plex Sans KR', sans-serif;
+    font-size:12px;
+    color:var(--text-dim);
+    margin-top:8px;
+    letter-spacing:0.04em;
+  }
+  .turn-header .t-sub b{color:var(--amber)}
+
+  /* 챔버 시각화 */
+  .chamber{
+    padding:14px 12px;
+    background:var(--panel);
+    border:1px solid var(--line-strong);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+  }
+  .chamber-head{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'Share Tech Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.16em;
+    color:var(--cyan);
+    margin-bottom:12px;
+  }
+  .chamber-head .cnt b{
+    color:var(--amber);
+    font-family:'Orbitron', sans-serif;
+    font-size:14px;
+  }
+  .bullets{
+    display:grid;
+    grid-template-columns:repeat(6, 1fr);
+    gap:6px;
+  }
+  .bullet{
+    aspect-ratio:1/2.3;
+    position:relative;
+    display:flex; flex-direction:column;
+    align-items:center;
+  }
+  .bullet-tip{
+    width:70%; height:30%;
+    background:linear-gradient(180deg, #ffd96e, #ffb020);
+    border-radius:50% 50% 18% 18% / 80% 80% 18% 18%;
+    box-shadow:
+      inset 2px 0 4px rgba(255,255,255,0.5),
+      inset -2px 0 4px rgba(0,0,0,0.3),
+      0 0 8px rgba(255,176,32,0.5);
+  }
+  .bullet-case{
+    width:84%; flex:1;
+    margin-top:-2px;
+    background:linear-gradient(90deg, #b8860b 0%, #d4a017 50%, #b8860b 100%);
+    border-radius:2px 2px 4px 4px;
+    box-shadow:
+      inset 0 -3px 4px rgba(0,0,0,0.3),
+      inset 0 3px 4px rgba(255,255,255,0.2);
+    position:relative;
+  }
+  .bullet-case::after{
+    content:"";
+    position:absolute; bottom:6%; left:6%; right:6%; height:14%;
+    background:linear-gradient(90deg, transparent, rgba(0,0,0,0.4), transparent);
+  }
+  .bullet.current{
+    transform:translateY(-3px);
+    animation:bulletPulse 1.2s ease-in-out infinite;
+  }
+  @keyframes bulletPulse{
+    0%,100%{filter:drop-shadow(0 0 6px rgba(255,176,32,0.6))}
+    50%{filter:drop-shadow(0 0 14px rgba(255,176,32,1))}
+  }
+  .bullet.fired{
+    opacity:0.4;
+    filter:grayscale(1);
+  }
+  .bullet.fired .bullet-tip{
+    background:linear-gradient(180deg, #555, #333);
+    box-shadow:none;
+  }
+  .bullet.fired .bullet-case{
+    background:linear-gradient(90deg, #444 0%, #555 50%, #444 100%);
+  }
+  .bullet.fired-real{
+    opacity:1; filter:none;
+  }
+  .bullet.fired-real .bullet-tip{
+    background:linear-gradient(180deg, #ff6080, var(--red));
+    box-shadow:
+      inset 2px 0 4px rgba(255,255,255,0.5),
+      inset -2px 0 4px rgba(0,0,0,0.3),
+      0 0 14px var(--red);
+  }
+  .bullet.fired-real .bullet-case{
+    background:linear-gradient(90deg, #8b1532 0%, var(--red) 50%, #8b1532 100%);
+    box-shadow:
+      inset 0 -3px 4px rgba(0,0,0,0.4),
+      inset 0 3px 4px rgba(255,255,255,0.2),
+      0 0 10px rgba(255,46,90,0.5);
+  }
+  .bullet-num{
+    font-family:'Share Tech Mono', monospace;
+    font-size:9px;
+    color:var(--text-dim);
+    margin-top:4px;
+    letter-spacing:0.06em;
+  }
+  .bullet.current .bullet-num{color:var(--amber); text-shadow:0 0 6px var(--amber)}
+
+  .chamber-legend{
+    margin-top:10px;
+    display:flex; justify-content:center; gap:14px;
+    font-family:'Share Tech Mono', monospace;
+    font-size:10px;
+    color:var(--text-dim);
+    letter-spacing:0.06em;
+  }
+  .chamber-legend span{display:flex; align-items:center; gap:5px}
+  .legend-dot{
+    width:8px; height:8px; border-radius:50%;
+  }
+  .ld-amber{background:var(--amber); box-shadow:0 0 6px var(--amber)}
+  .ld-gray{background:#555}
+  .ld-red{background:var(--red); box-shadow:0 0 6px var(--red)}
+
+  /* 액션 버튼 */
+  .actions{
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .act-btn{
+    padding:18px 8px;
+    background:rgba(0,15,35,0.7);
+    border:1.5px solid var(--red);
+    color:var(--red);
+    cursor:pointer;
+    font-family:'Orbitron', sans-serif;
+    font-weight:700;
+    transition:all 0.2s;
+    position:relative;
+    overflow:hidden;
+    text-shadow:0 0 8px rgba(255,46,90,0.5);
+  }
+  .act-btn .a-ico{
+    font-size:22px;
+    display:block;
+    margin-bottom:6px;
+  }
+  .act-btn .a-label{
+    font-size:11px;
+    letter-spacing:0.16em;
+    line-height:1.3;
+  }
+  .act-btn .a-sub{
+    display:block;
+    font-family:'Share Tech Mono', monospace;
+    font-weight:400;
+    font-size:9.5px;
+    color:var(--text-dim);
+    text-shadow:none;
+    letter-spacing:0.1em;
+    margin-top:4px;
+  }
+  .act-btn.self{
+    border-color:var(--amber);
+    color:var(--amber);
+    text-shadow:0 0 8px rgba(255,176,32,0.5);
+  }
+  .act-btn:active{
+    background:var(--red);
+    color:#fff;
+    text-shadow:none;
+    box-shadow:0 0 24px var(--red);
+  }
+  .act-btn.self:active{
+    background:var(--amber);
+    color:#000;
+    box-shadow:0 0 24px var(--amber);
+  }
+  .act-btn:disabled{opacity:0.4; cursor:not-allowed}
+
+  /* 발사 오버레이 */
+  .fire-overlay{
+    position:fixed; inset:0;
+    background:rgba(0,5,16,0.92);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    z-index:200;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:24px;
+    text-align:center;
+    animation:fadeIn 0.2s;
+  }
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .fire-stage{
+    width:100%; max-width:380px;
+  }
+  .fire-target{
+    font-family:'Share Tech Mono', monospace;
+    font-size:11px;
+    color:var(--text-dim);
+    letter-spacing:0.2em;
+    margin-bottom:8px;
+  }
+  .fire-target b{color:var(--cyan)}
+  .fire-target.magenta b{color:var(--magenta)}
+  .fire-action{
+    font-family:'Orbitron', sans-serif;
+    font-weight:700;
+    font-size:14px;
+    letter-spacing:0.22em;
+    color:var(--amber);
+    margin-bottom:24px;
+    text-shadow:0 0 10px rgba(255,176,32,0.5);
+  }
+  .fire-status{
+    font-family:'Share Tech Mono', monospace;
+    font-size:13px;
+    color:var(--cyan);
+    letter-spacing:0.1em;
+    min-height:24px;
+    margin-bottom:16px;
+  }
+  .fire-status .cursor{
+    display:inline-block;
+    width:8px; height:14px;
+    background:var(--cyan);
+    margin-left:3px;
+    vertical-align:middle;
+    animation:blink 0.6s infinite;
+  }
+  .fire-bar{
+    height:8px;
+    background:rgba(0,240,255,0.08);
+    border:1px solid rgba(0,240,255,0.4);
+    position:relative; overflow:hidden;
+    margin-bottom:24px;
+  }
+  .fire-bar-fill{
+    position:absolute; left:0; top:0; bottom:0;
+    width:0%;
+    background:linear-gradient(90deg, var(--cyan), var(--amber), var(--red));
+    box-shadow:0 0 12px var(--amber);
+  }
+
+  /* 결과 표시 */
+  .fire-result{
+    display:none;
+  }
+  .fire-result.show{display:block; animation:resultBurst 0.5s}
+  @keyframes resultBurst{
+    0%{opacity:0; transform:scale(0.5); filter:blur(8px)}
+    60%{transform:scale(1.1); filter:blur(0)}
+    100%{opacity:1; transform:scale(1)}
+  }
+  .fr-label{
+    font-family:'Share Tech Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.22em;
+    margin-bottom:8px;
+  }
+  .fr-name{
+    font-family:'Black Han Sans', sans-serif;
+    font-size:54px;
+    letter-spacing:0.05em;
+    line-height:1;
+    margin-bottom:14px;
+  }
+  .fr-blank .fr-label{color:var(--text-dim)}
+  .fr-blank .fr-name{
+    color:var(--cyan-soft);
+    text-shadow:0 0 16px rgba(92,232,255,0.6);
+  }
+  .fr-real .fr-label{color:var(--red); animation:blink 0.3s 3}
+  .fr-real .fr-name{
+    color:var(--red);
+    text-shadow:0 0 24px var(--red), 0 0 50px rgba(255,46,90,0.5);
+    animation:shake 0.4s;
+  }
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-10px)}
+    40%{transform:translateX(10px)}
+    60%{transform:translateX(-6px)}
+    80%{transform:translateX(6px)}
+  }
+  .fr-detail{
+    font-family:'IBM Plex Sans KR', sans-serif;
+    font-size:13px;
+    line-height:1.65;
+    color:var(--text);
+    padding:12px 14px;
+    background:rgba(0,0,0,0.4);
+    border:1px solid;
+    margin-bottom:14px;
+  }
+  .fr-blank .fr-detail{border-color:rgba(92,232,255,0.4)}
+  .fr-real .fr-detail{border-color:var(--red); background:rgba(60,0,15,0.4)}
+  .fr-detail b{color:var(--amber); font-weight:700}
+  .fr-real .fr-detail b{color:#fff}
+  .fr-next{
+    width:100%;
+    padding:14px;
+    background:rgba(0,15,35,0.7);
+    border:1.5px solid var(--cyan);
+    color:var(--cyan);
+    font-family:'Orbitron', sans-serif;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:0.22em;
+    cursor:pointer;
+    text-shadow:0 0 8px rgba(0,240,255,0.5);
+    transition:all 0.2s;
+  }
+  .fr-next:active{
+    background:var(--cyan);
+    color:#000;
+    text-shadow:none;
+  }
+  .fr-real .fr-next{
+    border-color:var(--red);
+    color:var(--red);
+    text-shadow:0 0 8px rgba(255,46,90,0.5);
+  }
+  .fr-real .fr-next:active{
+    background:var(--red);
+    color:#fff;
+  }
+
+  /* === 결과 페이지 === */
+  .result-page{
+    text-align:center;
+  }
+  .winner-banner{
+    padding:30px 18px;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(34,255,136,0.18), transparent 70%),
+      linear-gradient(180deg, rgba(0,30,15,0.6), rgba(0,15,35,0.6));
+    border:1.5px solid var(--green);
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 0 40px rgba(34,255,136,0.2);
+  }
+  .winner-banner::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(90deg, rgba(34,255,136,0.04) 0 2px, transparent 2px 6px);
+    pointer-events:none;
+  }
+  .winner-banner .w-label{
+    font-family:'Share Tech Mono', monospace;
+    font-size:11.5px;
+    color:var(--green);
+    letter-spacing:0.28em;
+    margin-bottom:14px;
+    text-shadow:0 0 8px rgba(34,255,136,0.6);
+  }
+  .winner-banner .w-name{
+    font-family:'Black Han Sans', sans-serif;
+    font-size:54px;
+    color:#fff;
+    letter-spacing:0.12em;
+    line-height:1;
+    text-shadow:
+      0 0 20px var(--green),
+      0 0 40px rgba(34,255,136,0.6),
+      0 0 80px rgba(34,255,136,0.3);
+    animation:winnerGlow 2.2s ease-in-out infinite;
+  }
+  @keyframes winnerGlow{
+    0%,100%{filter:brightness(1)}
+    50%{filter:brightness(1.2)}
+  }
+  .winner-banner .w-win{
+    font-family:'Orbitron', sans-serif;
+    font-weight:900;
+    font-size:18px;
+    color:var(--green);
+    letter-spacing:0.3em;
+    margin-top:10px;
+    text-shadow:0 0 10px rgba(34,255,136,0.6);
+  }
+  .ending-route{
+    padding:18px 14px;
+    background:linear-gradient(180deg, rgba(255,176,32,0.10), rgba(0,15,35,0.5));
+    border:1.5px solid var(--amber);
+    position:relative;
+  }
+  .ending-route::before{
+    content:"";
+    position:absolute; left:0; top:0; bottom:0; width:3px;
+    background:linear-gradient(180deg, var(--amber), transparent);
+  }
+  .er-tag{
+    font-family:'Share Tech Mono', monospace;
+    font-size:10.5px;
+    color:var(--amber);
+    letter-spacing:0.22em;
+    margin-bottom:10px;
+    text-shadow:0 0 6px rgba(255,176,32,0.5);
+  }
+  .er-msg{
+    font-family:'IBM Plex Sans KR', sans-serif;
+    font-size:15px;
+    color:var(--text);
+    line-height:1.6;
+    margin-bottom:10px;
+  }
+  .er-route{
+    font-family:'Black Han Sans', sans-serif;
+    font-size:32px;
+    color:var(--amber);
+    letter-spacing:0.12em;
+    line-height:1;
+    text-shadow:0 0 16px rgba(255,176,32,0.7), 0 0 32px rgba(255,176,32,0.3);
+    padding:14px 0;
+  }
+  .er-route .arrow{
+    color:var(--cyan);
+    margin:0 8px;
+    text-shadow:0 0 8px var(--cyan);
+  }
+  .er-route .code{
+    color:#fff;
+    text-shadow:0 0 16px var(--amber), 0 0 32px rgba(255,176,32,0.5);
+  }
+
+  .loser-info{
+    padding:10px 12px;
+    background:rgba(0,0,0,0.35);
+    border-left:2px solid var(--text-dim);
+    font-family:'Share Tech Mono', monospace;
+    font-size:11px;
+    color:var(--text-dim);
+    letter-spacing:0.06em;
+    text-align:left;
+  }
+  .loser-info b{color:var(--cyan-soft); font-weight:normal}
+
+  /* 푸터 티커 */
+  .ticker{
+    margin-top:auto;
+    border-top:1px solid var(--line);
+    padding-top:10px;
+    font-family:'Share Tech Mono', monospace;
+    font-size:9.5px;
+    color:var(--text-dim);
+    letter-spacing:0.12em;
+    display:flex; justify-content:space-between; align-items:center;
+    overflow:hidden;
+  }
+  .ticker .stream{
+    flex:1; overflow:hidden; margin:0 10px; white-space:nowrap;
+  }
+  .ticker .stream-inner{
+    display:inline-block;
+    animation:slide 28s linear infinite;
+    padding-left:100%;
+  }
+  @keyframes slide{
+    0%{transform:translateX(0)}
+    100%{transform:translateX(-100%)}
+  }
+  .ticker .end{color:var(--red)}
+
+  @media (max-width:340px){
+    .case-title{font-size:19px}
+    .turn-header .t-name{font-size:30px}
+    .fr-name{font-size:42px}
+    .winner-banner .w-name{font-size:42px}
+    .er-route{font-size:24px}
+    .act-btn .a-ico{font-size:18px}
+    .act-btn .a-label{font-size:10px}
+    .big-btn{font-size:12px; letter-spacing:0.18em}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== 부팅 ===== -->
+<div class="boot" id="boot">
+  <div class="scan-line"></div>
+  <div class="boot-head">
+    <div><span class="tag">[ FINAL PROTOCOL ]</span></div>
+    <div>NODE-Ω.KR <span class="blink">█</span></div>
+  </div>
+
+  <div class="boot-logo">POLICE // ENDING TERMINAL</div>
+
+  <div class="boot-log" id="bootLog"></div>
+
+  <div class="boot-progress">
+    <div class="bp-label">
+      <span>LOADING FINAL SEQUENCE</span>
+      <b>#FINAL-0001</b>
+    </div>
+    <div class="bar"><div class="bar-fill"></div></div>
+  </div>
+
+  <div class="boot-foot">
+    [ <b>ARMED</b> ] 6-CHAMBER / 1-LIVE / 5-BLANK
+  </div>
+</div>
+
+<!-- ===== 페이지 1: 브리핑 ===== -->
+<div class="terminal show" id="page1">
+  <div class="topbar">
+    <div class="left">
+      <span class="dot"></span>
+      <span>FINAL ROUND · 최종 라운드</span>
+    </div>
+    <div class="right"><span id="clock1">--:--:--</span></div>
+  </div>
+
+  <div class="crest">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <div class="crest-row">
+      <div class="badge">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <!-- 권총 실루엣 -->
+          <path d="M8 32 L40 32 L40 28 L52 28 L52 36 L40 36 L40 40 L24 40 L20 50 L14 50 L18 40 L8 40 Z"
+                stroke="#ff2e5a" stroke-width="1.6" fill="rgba(255,46,90,0.10)"/>
+          <circle cx="14" cy="36" r="6" stroke="#ff2e5a" stroke-width="1.4" fill="none"/>
+          <circle cx="14" cy="36" r="2" fill="#ff2e5a"/>
+          <!-- 격발 효과 -->
+          <path d="M52 32 L60 30 M52 32 L60 34 M52 30 L58 26 M52 34 L58 38"
+                stroke="#ffb020" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="crest-text">
+        <div class="title">FINAL ROUND</div>
+        <div class="sub">최종 라운드 · RUSSIAN PROTOCOL</div>
+        <div class="div">2 PLAYERS // SUDDEN DEATH</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="case">
+    <div class="case-tab">BRIEFING</div>
+    <div class="case-head">
+      <span>BRIEF NO. <span class="num">#FINAL-0001</span></span>
+      <span>READ CAREFULLY</span>
+    </div>
+    <div class="case-title">
+      최종 라운드 · <span class="accent">규칙 안내</span>
+    </div>
+
+    <div class="rules">
+      <div class="rules-intro">
+        이제부터 <b>연희</b><span class="vs">VS</span><b>은주</b><br>
+        둘의 게임이 시작됩니다.
+      </div>
+
+      <div class="rule-line">
+        <span class="num">01</span>
+        이 권총에는 총 <b>6발</b>이 들어있고, <b>5발은 공포탄</b>, <b>1발은 실탄</b>입니다.
+      </div>
+
+      <div class="rule-line">
+        <span class="num">02</span>
+        몇 번째에 실탄이 들어있는지는 <b>알 수 없습니다</b>.
+      </div>
+
+      <div class="rule-line">
+        <span class="num">03</span>
+        자신의 차례에 할 수 있는 행동은 두 가지입니다.<br>
+        <b>① 상대에게 쏘기</b> / <b>② 자신에게 쏘기</b>
+      </div>
+
+      <div class="rule-line danger">
+        <span class="num">04</span>
+        <b>상대에게 쐈을 때</b> · 실탄이면 <b>승리</b>, 공포탄이면 <b>상대에게 차례가 넘어갑니다</b>.
+      </div>
+
+      <div class="rule-line safe">
+        <span class="num">05</span>
+        <b>자신에게 쐈을 때</b> · 실탄이면 <b>패배</b>, 공포탄이면 <b>한 번 더 기회</b>를 얻습니다.
+      </div>
+
+      <div class="rule-final">
+        <b>가위바위보</b>로 먼저 할 사람을 정한 후 게임을 시작해주세요.
+      </div>
+
+      <div class="luck">GOOD LUCK · 행운을 빕니다</div>
+    </div>
+  </div>
+
+  <button class="big-btn" id="btnToPick">
+    <span class="ico">▶</span>게임 시작 · BEGIN
+  </button>
+
+  <div class="ticker">
+    <span>SYS</span>
+    <div class="stream"><div class="stream-inner">
+      ▸ 최종 프로토콜 가동 ▸ 무기 장전 완료 ▸ 6-챔버 · 1-실탄 · 5-공포탄 ▸ 무작위 배치 ▸ 위치 정보 비공개 ▸ 본 게임의 모든 결과는 기록됩니다 ▸
+    </div></div>
+    <span class="end">REC ●</span>
+  </div>
+</div>
+
+<!-- ===== 페이지 2: 선공 선택 ===== -->
+<div class="terminal" id="page2" hidden>
+  <div class="topbar">
+    <div class="left">
+      <span class="dot"></span>
+      <span>STAGE · 선공 결정</span>
+    </div>
+    <div class="right"><span id="clock2">--:--:--</span></div>
+  </div>
+
+  <div class="case">
+    <div class="case-tab">SELECT FIRST</div>
+    <div class="case-head">
+      <span>STAGE NO. <span class="num">#0/2</span></span>
+      <span>CHOOSE</span>
+    </div>
+    <div class="case-title">
+      <span class="accent-c">가위바위보</span> 후 <span class="accent-a">선공</span>을 선택하세요
+    </div>
+    <div style="font-size:13px; line-height:1.65; color:var(--text-dim); padding:8px 10px; background:rgba(0,0,0,0.3); border-left:2px solid var(--amber);">
+      가위바위보로 먼저 할 사람을 정한 후<br>
+      <b style="color:var(--amber)">이긴 사람</b>의 이름을 누르세요.
+    </div>
+  </div>
+
+  <div class="player-pick">
+    <button class="player-card" data-first="연희">
+      <div class="p-tag">PLAYER 01</div>
+      <div class="p-name">연희</div>
+      <div class="p-sub">FIRST · 선공</div>
+    </button>
+    <button class="player-card b" data-first="은주">
+      <div class="p-tag">PLAYER 02</div>
+      <div class="p-name">은주</div>
+      <div class="p-sub">FIRST · 선공</div>
+    </button>
+  </div>
+
+  <div class="ticker">
+    <span>SYS</span>
+    <div class="stream"><div class="stream-inner">
+      ▸ 선공 결정 대기 중 ▸ 공정 추첨 · 가위바위보 ▸ 선택 후 즉시 게임 시작 ▸
+    </div></div>
+    <span class="end">REC ●</span>
+  </div>
+</div>
+
+<!-- ===== 페이지 3: 게임 ===== -->
+<div class="terminal" id="page3" hidden>
+  <div class="topbar">
+    <div class="left">
+      <span class="dot"></span>
+      <span id="roundLabel">ROUND 01 · 게임 진행 중</span>
+    </div>
+    <div class="right"><span id="clock3">--:--:--</span></div>
+  </div>
+
+  <div class="turn-header" id="turnHeader">
+    <div class="t-label" id="turnLabel">CURRENT TURN · 현재 차례</div>
+    <div class="t-name" id="turnName">연희</div>
+    <div class="t-sub">행동을 선택하세요. <b id="streakInfo"></b></div>
+  </div>
+
+  <div class="chamber">
+    <div class="chamber-head">
+      <span>CHAMBER · 탄창 상태</span>
+      <span class="cnt">남은 발수 <b id="remainCnt">6</b> / 6</span>
+    </div>
+    <div class="bullets" id="bullets"></div>
+    <div class="chamber-legend">
+      <span><span class="legend-dot ld-amber"></span>장전됨</span>
+      <span><span class="legend-dot ld-gray"></span>공포탄</span>
+      <span><span class="legend-dot ld-red"></span>실탄</span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="act-btn" id="actOpponent">
+      <span class="a-ico">⌖</span>
+      <span class="a-label">상대에게 쏘기</span>
+      <span class="a-sub">FIRE AT TARGET</span>
+    </button>
+    <button class="act-btn self" id="actSelf">
+      <span class="a-ico">⊗</span>
+      <span class="a-label">자신에게 쏘기</span>
+      <span class="a-sub">FIRE AT SELF</span>
+    </button>
+  </div>
+
+  <div class="ticker">
+    <span>SYS</span>
+    <div class="stream"><div class="stream-inner">
+      ▸ 무기 장전 상태 정상 ▸ 발사 대기 중 ▸ 챔버 회전 가능 ▸ 본 라운드의 모든 격발은 기록됩니다 ▸
+    </div></div>
+    <span class="end">REC ●</span>
+  </div>
+</div>
+
+<!-- ===== 페이지 4: 결과 ===== -->
+<div class="terminal result-page" id="page4" hidden>
+  <div class="topbar">
+    <div class="left">
+      <span class="dot" style="background:var(--green); box-shadow:0 0 8px var(--green)"></span>
+      <span>GAME OVER · 결과 확정</span>
+    </div>
+    <div class="right"><span id="clock4">--:--:--</span></div>
+  </div>
+
+  <div class="winner-banner">
+    <div class="w-label">▸ WINNER · 승자</div>
+    <div class="w-name" id="winnerName">--</div>
+    <div class="w-win">VICTORY</div>
+  </div>
+
+  <div class="ending-route">
+    <div class="er-tag">▸ ROUTE LOCKED · 엔딩 경로 확정</div>
+    <div class="er-msg">
+      <span id="winnerNameSmall">--</span>이(가) 이겼으므로<br>
+      아래 엔딩으로 진행합니다.
+    </div>
+    <div class="er-route">
+      <span class="arrow">▶</span>
+      <span>엔딩 <span class="code" id="endingCode">A</span></span>
+      <span class="arrow">◀</span>
+    </div>
+  </div>
+
+  <div class="loser-info">
+    PATCH: <b id="loserLog">--</b>
+  </div>
+
+  <div class="ticker">
+    <span>SYS</span>
+    <div class="stream"><div class="stream-inner">
+      ▸ 최종 결과 송신 완료 ▸ 엔딩 라우팅 잠금 ▸ 엔딩북을 펼쳐 결과를 확인하세요 ▸
+    </div></div>
+    <span class="end">REC ●</span>
+  </div>
+</div>
+
+<!-- ===== 발사 오버레이 ===== -->
+<div class="fire-overlay" id="fireOverlay" hidden>
+  <div class="fire-stage">
+    <div class="fire-target" id="fireTarget"><b>--</b> →  <span id="fireDir">상대</span></div>
+    <div class="fire-action" id="fireAction">발사 대기 · STAND BY</div>
+    <div class="fire-status" id="fireStatus">탄환 분석 중<span class="cursor"></span></div>
+    <div class="fire-bar"><div class="fire-bar-fill" id="fireBar"></div></div>
+
+    <div class="fire-result" id="fireResult">
+      <div class="fr-label" id="frLabel"></div>
+      <div class="fr-name" id="frName"></div>
+      <div class="fr-detail" id="frDetail"></div>
+      <button class="fr-next" id="frNext">계속 · CONTINUE</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ====== 부팅 ======
+  const bootLog = document.getElementById('bootLog');
+  const logs = [
+    {t:'> 최종 프로토콜 채널 개설 중...'},
+    {t:'> AES-512 핸드셰이크 ........................ <span class="ok">[ OK ]</span>'},
+    {t:'> <span class="danger">무기 시스템</span> 활성화 ........................ <span class="ok">[ OK ]</span>'},
+    {t:'> 챔버 6-슬롯 검증 .......................... <span class="ok">[ OK ]</span>'},
+    {t:'> <span class="warn">탄환 무작위 배치</span> ........................ <span class="ok">[ OK ]</span>'},
+    {t:'> 실탄 1발 · 공포탄 5발 ..................... <span class="ok">[ ARMED ]</span>'},
+    {t:'> <span class="ic">POLICE</span> 메인프레임 연결 ................ <span class="ok">[ OK ]</span>'},
+    {t:'> <span class="dim">최종 라운드 사건 파일 로드 중...</span>'},
+    {t:'> <span class="danger">참가자: 연희 · 은주</span> ........................'},
+  ];
+
+  let i = 0;
+  function pushLog(){
+    if(i >= logs.length) return;
+    const line = document.createElement('div');
+    line.className = 'log-line';
+    line.innerHTML = logs[i].t;
+    bootLog.appendChild(line);
+    i++;
+    setTimeout(pushLog, 230 + Math.random()*70);
+  }
+  pushLog();
+
+  setTimeout(()=>{
+    document.getElementById('boot').classList.add('hide');
+  }, 5400);
+
+  // ====== 시계 ======
+  function tick(){
+    const d = new Date();
+    const z = n => String(n).padStart(2,'0');
+    const t = `${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}`;
+    ['clock1','clock2','clock3','clock4'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.textContent = t;
+    });
+  }
+  setInterval(tick, 1000);
+  tick();
+
+  // ====== 페이지 전환 ======
+  const pages = {
+    1: document.getElementById('page1'),
+    2: document.getElementById('page2'),
+    3: document.getElementById('page3'),
+    4: document.getElementById('page4'),
+  };
+  function go(n){
+    Object.values(pages).forEach(p => { p.hidden = true; p.classList.remove('show'); });
+    pages[n].hidden = false;
+    pages[n].classList.add('show');
+    window.scrollTo({top:0, behavior:'instant'});
+  }
+
+  document.getElementById('btnToPick').addEventListener('click', ()=>{
+    if(navigator.vibrate) navigator.vibrate(40);
+    go(2);
+  });
+
+  // ====== 게임 상태 ======
+  const STATE = {
+    chamber: [],          // [false, false, true, false, ...] - true가 실탄
+    fireIdx: 0,           // 다음에 격발될 탄환 인덱스
+    current: '연희',      // 현재 차례
+    winner: null,
+    loser: null,
+    endingMethod: '',     // 결과 로그용
+    log: [],              // 격발 로그
+  };
+
+  function initGame(firstPlayer){
+    STATE.chamber = Array(6).fill(false);
+    STATE.chamber[Math.floor(Math.random() * 6)] = true;
+    STATE.fireIdx = 0;
+    STATE.current = firstPlayer;
+    STATE.winner = null;
+    STATE.loser = null;
+    STATE.endingMethod = '';
+    STATE.log = [];
+    renderGame();
+  }
+
+  // 선공 선택
+  document.querySelectorAll('.player-card').forEach(btn => {
+    btn.addEventListener('click', ()=>{
+      const first = btn.dataset.first;
+      if(navigator.vibrate) navigator.vibrate(40);
+      initGame(first);
+      go(3);
+    });
+  });
+
+  // ====== 게임 렌더링 ======
+  const turnHeader = document.getElementById('turnHeader');
+  const turnName = document.getElementById('turnName');
+  const remainCnt = document.getElementById('remainCnt');
+  const bulletsEl = document.getElementById('bullets');
+  const streakInfo = document.getElementById('streakInfo');
+  const actOpponent = document.getElementById('actOpponent');
+  const actSelf = document.getElementById('actSelf');
+
+  function renderGame(){
+    // 현재 차례 표시
+    turnName.textContent = STATE.current;
+    if(STATE.current === '은주'){
+      turnHeader.classList.add('magenta');
+    } else {
+      turnHeader.classList.remove('magenta');
+    }
+
+    // 챔버 렌더
+    bulletsEl.innerHTML = '';
+    for(let idx = 0; idx < 6; idx++){
+      const b = document.createElement('div');
+      b.className = 'bullet';
+      const isFired = idx < STATE.fireIdx;
+      const isCurrent = idx === STATE.fireIdx;
+      if(isFired){
+        // 격발된 탄환
+        if(STATE.chamber[idx]){
+          b.classList.add('fired-real');
+        } else {
+          b.classList.add('fired');
+        }
+      } else if(isCurrent){
+        b.classList.add('current');
+      }
+      b.innerHTML = `
+        <div class="bullet-tip"></div>
+        <div class="bullet-case"></div>
+        <div class="bullet-num">#${String(idx+1).padStart(2,'0')}</div>
+      `;
+      bulletsEl.appendChild(b);
+    }
+    remainCnt.textContent = 6 - STATE.fireIdx;
+
+    // 연속 자해 안내
+    const selfStreak = STATE.log.filter(l => l.target==='self' && !l.real).length;
+    if(selfStreak > 0 && STATE.log.length > 0 && STATE.log[STATE.log.length-1].target==='self' && !STATE.log[STATE.log.length-1].real){
+      streakInfo.textContent = `(자해 ${selfStreak}회 연속 · 한 번 더 기회)`;
+    } else {
+      streakInfo.textContent = '';
+    }
+  }
+
+  // ====== 발사 액션 ======
+  const fireOverlay = document.getElementById('fireOverlay');
+  const fireTarget = document.getElementById('fireTarget');
+  const fireDir = document.getElementById('fireDir');
+  const fireAction = document.getElementById('fireAction');
+  const fireStatus = document.getElementById('fireStatus');
+  const fireBar = document.getElementById('fireBar');
+  const fireResult = document.getElementById('fireResult');
+  const frLabel = document.getElementById('frLabel');
+  const frName = document.getElementById('frName');
+  const frDetail = document.getElementById('frDetail');
+  const frNext = document.getElementById('frNext');
+
+  let busy = false;
+
+  actOpponent.addEventListener('click', ()=> fire('opponent'));
+  actSelf.addEventListener('click', ()=> fire('self'));
+
+  function fire(target){
+    if(busy) return;
+    busy = true;
+    if(navigator.vibrate) navigator.vibrate(40);
+
+    const shooter = STATE.current;
+    const opp = shooter === '연희' ? '은주' : '연희';
+    const isReal = STATE.chamber[STATE.fireIdx];
+
+    // 오버레이 초기화
+    fireOverlay.hidden = false;
+    fireResult.classList.remove('show', 'fr-real', 'fr-blank');
+    fireBar.style.transition = 'none';
+    fireBar.style.width = '0%';
+
+    // 타겟 표시
+    fireTarget.innerHTML = `<b>${shooter}</b> ▸ <span>${target==='opponent' ? opp + ' (상대)' : shooter + ' (자신)'}</span>`;
+    fireTarget.classList.toggle('magenta', shooter === '은주');
+    fireAction.textContent = target === 'opponent' ? '상대에게 발사 · FIRE AT TARGET' : '자신에게 발사 · FIRE AT SELF';
+    fireStatus.innerHTML = '탄환 분석 중<span class="cursor"></span>';
+
+    // 진행 바 애니메이션
+    requestAnimationFrame(()=>{
+      fireBar.style.transition = 'width 1.6s cubic-bezier(0.6, 0, 0.2, 1)';
+      fireBar.style.width = '100%';
+    });
+
+    // 상태 메시지 단계별 변경
+    setTimeout(()=> fireStatus.innerHTML = '챔버 회전<span class="cursor"></span>', 400);
+    setTimeout(()=> fireStatus.innerHTML = '격발 시퀀스<span class="cursor"></span>', 900);
+    setTimeout(()=> fireStatus.innerHTML = '결과 분석<span class="cursor"></span>', 1300);
+
+    // 결과 표시
+    setTimeout(()=>{
+      revealResult(shooter, opp, target, isReal);
+    }, 1800);
+  }
+
+  function revealResult(shooter, opp, target, isReal){
+    if(navigator.vibrate){
+      navigator.vibrate(isReal ? [200,80,200,80,300] : [60]);
+    }
+
+    if(isReal){
+      fireResult.classList.add('fr-real');
+      frLabel.textContent = '▸ LIVE ROUND // 실탄';
+      frName.textContent = '실탄';
+    } else {
+      fireResult.classList.add('fr-blank');
+      frLabel.textContent = '▸ BLANK // 공포탄';
+      frName.textContent = '공포탄';
+    }
+
+    // 결과 처리 분기
+    let detail = '';
+    let gameOver = false;
+
+    if(target === 'opponent'){
+      if(isReal){
+        // 상대에게 쐈고 실탄 → shooter 승리
+        STATE.winner = shooter;
+        STATE.loser = opp;
+        STATE.endingMethod = `${shooter}이(가) ${opp}에게 발사 · 실탄`;
+        detail = `<b>${shooter}</b>의 승리.<br>${opp}이(가) 실탄에 맞았습니다.`;
+        gameOver = true;
+      } else {
+        // 상대에게 쐈고 공포탄 → 차례 넘김
+        STATE.current = opp;
+        detail = `<b>${opp}</b>에게 차례가 넘어갑니다.`;
+      }
+    } else {
+      if(isReal){
+        // 자신에게 쐈고 실탄 → shooter 패배
+        STATE.winner = opp;
+        STATE.loser = shooter;
+        STATE.endingMethod = `${shooter}이(가) 자신에게 발사 · 실탄`;
+        detail = `<b>${shooter}</b>의 패배.<br>${opp}이(가) 승리합니다.`;
+        gameOver = true;
+      } else {
+        // 자신에게 쐈고 공포탄 → 한번 더
+        detail = `<b>${shooter}</b>이(가) 한 번 더 기회를 얻습니다.`;
+      }
+    }
+
+    frDetail.innerHTML = detail;
+
+    // 로그 기록
+    STATE.log.push({
+      shooter, target, real: isReal, idx: STATE.fireIdx
+    });
+    STATE.fireIdx++;
+
+    fireResult.classList.add('show');
+
+    // 다음 버튼 핸들러
+    frNext.onclick = ()=>{
+      fireOverlay.hidden = true;
+      busy = false;
+      if(gameOver){
+        showFinalResult();
+      } else {
+        renderGame();
+      }
+    };
+  }
+
+  // ====== 최종 결과 ======
+  function showFinalResult(){
+    const winner = STATE.winner;
+    const loser = STATE.loser;
+    document.getElementById('winnerName').textContent = winner;
+    document.getElementById('winnerNameSmall').textContent = winner;
+    document.getElementById('endingCode').textContent = winner === '연희' ? 'A' : 'B';
+    document.getElementById('loserLog').textContent = STATE.endingMethod;
+    go(4);
+  }
+
+  // 더블탭 줌 방지
+  let lastTouch = 0;
+  document.addEventListener('touchend', (e)=>{
+    const now = Date.now();
+    if(now - lastTouch <= 300) e.preventDefault();
+    lastTouch = now;
+  }, {passive:false});
+</script>
+</body>
+</html>
