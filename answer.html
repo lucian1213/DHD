@@ -1141,6 +1141,7 @@
     color:var(--text);
     min-height:80px;
     position:relative;
+    white-space:pre-line;
   }
   .hint-modal-body::before{
     content:"";
@@ -1172,6 +1173,179 @@
     color:#fff;
     text-shadow:none;
     box-shadow:0 0 24px var(--magenta);
+  }
+
+  /* ========================================
+     === 페이지 3: 장례식장 진입 ===
+     ======================================== */
+
+  .dot-green{
+    background:var(--green);
+    box-shadow:0 0 8px var(--green);
+  }
+
+  /* 그린 톤 위치 헤더 */
+  .loc-header-green{
+    background:linear-gradient(180deg, rgba(34,255,136,0.10), rgba(0,15,35,0.6));
+    border:1px solid rgba(34,255,136,0.45);
+  }
+  .loc-header-green .corner{border-color:var(--green)}
+  .loc-header-green::before{
+    background:
+      repeating-linear-gradient(90deg, rgba(34,255,136,0.04) 0 2px, transparent 2px 6px);
+  }
+  .loc-header-green .loc-tag{
+    color:var(--green);
+    text-shadow:0 0 8px rgba(34,255,136,0.5);
+  }
+  .loc-header-green .loc-name{
+    text-shadow:
+      0 0 14px rgba(34,255,136,0.7),
+      0 0 28px rgba(34,255,136,0.4);
+  }
+
+  /* 페이지3 case-tab 그린 */
+  .case-tab.tab-green{
+    background:var(--green);
+    color:#001020;
+  }
+  .case-title .accent3{
+    color:var(--green);
+    text-shadow:0 0 10px rgba(34,255,136,0.6);
+  }
+
+  .enter-case{
+    border-color:rgba(34,255,136,0.4);
+  }
+
+  /* 진입 안내 메시지 */
+  .enter-msg{
+    font-family:'IBM Plex Sans KR', sans-serif;
+    font-size:14px;
+    line-height:1.7;
+    color:var(--text);
+    padding:12px 14px;
+    background:rgba(34,255,136,0.06);
+    border-left:3px solid var(--green);
+    margin-bottom:12px;
+  }
+  .enter-msg b{
+    color:var(--cyan-soft);
+    font-weight:700;
+  }
+  .enter-note{
+    margin-top:10px;
+    padding:8px 10px;
+    background:rgba(255,176,32,0.10);
+    border-left:2px solid var(--amber);
+    font-size:12.5px;
+    color:var(--amber);
+    display:flex; align-items:flex-start; gap:6px;
+    line-height:1.55;
+  }
+  .enter-note .note-ico{
+    color:var(--amber);
+    font-weight:700;
+    font-size:14px;
+    flex-shrink:0;
+    margin-top:1px;
+  }
+  .enter-note b{
+    color:#fff;
+    font-weight:700;
+    text-shadow:0 0 6px rgba(255,176,32,0.5);
+  }
+
+  .enter-after{
+    font-family:'IBM Plex Sans KR', sans-serif;
+    font-size:14px;
+    line-height:1.65;
+    color:var(--text);
+    text-align:center;
+    padding:12px;
+    border:1px dashed rgba(0,240,255,0.4);
+    background:rgba(0,240,255,0.04);
+  }
+  .enter-after b{
+    color:var(--cyan);
+    font-weight:700;
+    text-shadow:0 0 8px rgba(0,240,255,0.5);
+  }
+
+  /* 정정/오류 박스 */
+  .errata-box{
+    position:relative;
+    overflow:hidden;
+    animation:errataIn 0.5s ease-out;
+  }
+  @keyframes errataIn{
+    from{opacity:0; transform:translateY(8px)}
+    to{opacity:1; transform:translateY(0)}
+  }
+  .errata-stripes{
+    height:10px;
+    background:repeating-linear-gradient(
+      135deg,
+      var(--red) 0 12px,
+      #000 12px 24px
+    );
+    animation:stripeSlide 0.8s linear infinite;
+  }
+  .errata-body{
+    padding:14px 14px 16px;
+    background:linear-gradient(180deg, rgba(255,46,90,0.14), rgba(255,46,90,0.04));
+    border-left:3px solid var(--red);
+    border-right:3px solid var(--red);
+    text-align:center;
+    position:relative;
+  }
+  .errata-body::before{
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(circle at 50% 0%, rgba(255,46,90,0.18), transparent 60%);
+    pointer-events:none;
+  }
+  .errata-head{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    margin-bottom:10px;
+  }
+  .errata-ico{
+    font-size:18px;
+    color:var(--red);
+    text-shadow:0 0 10px var(--red);
+    animation:warnBlink 0.7s infinite;
+  }
+  .errata-title{
+    font-family:'Orbitron', sans-serif;
+    font-weight:900;
+    font-size:12px;
+    letter-spacing:0.28em;
+    color:var(--red);
+    text-shadow:0 0 10px rgba(255,46,90,0.7);
+  }
+  .errata-msg{
+    font-family:'IBM Plex Sans KR', sans-serif;
+    font-size:14px;
+    line-height:1.7;
+    color:var(--text);
+  }
+  .errata-msg b{
+    font-weight:700;
+  }
+  .errata-msg .errata-q{
+    color:var(--amber);
+    text-shadow:0 0 6px rgba(255,176,32,0.5);
+  }
+  .errata-msg .errata-from{
+    color:var(--text-dim);
+    text-decoration:line-through;
+    font-weight:500;
+  }
+  .errata-msg .errata-to{
+    color:var(--green);
+    font-size:18px;
+    letter-spacing:0.04em;
+    text-shadow:0 0 10px rgba(34,255,136,0.6);
   }
 </style>
 </head>
@@ -1440,6 +1614,9 @@
       <div class="r-label" id="pwLabel"></div>
       <div class="r-msg" id="pwMsg"></div>
       <div class="r-sub" id="pwSub"></div>
+      <button class="travel-btn enter-btn" id="enterBtn" hidden>
+        <span class="ico">⛬</span>진입하기 · ENTER
+      </button>
     </div>
   </div>
 
@@ -1496,6 +1673,81 @@
     <div class="stream">
       <div class="stream-inner">
         ▸ 출입 통제 시스템 활성 ▸ 비밀번호 인증 대기 중 ▸ CCTV-12대 감시 중 ▸ 비인가 접근 자동 신고 ▸ 본 게이트의 모든 시도는 기록됩니다 ▸
+      </div>
+    </div>
+    <span class="end">REC ●</span>
+  </div>
+</div>
+
+<!-- ===== 페이지 3: 장례식장 진입 ===== -->
+<div class="terminal page3" id="terminal3" hidden>
+
+  <!-- 상단 상태바 -->
+  <div class="topbar">
+    <div class="left">
+      <span class="dot dot-green"></span>
+      <span>ENTERED · 출입 승인 완료</span>
+    </div>
+    <div class="right">
+      <span id="clock3">--:--:--</span>
+    </div>
+  </div>
+
+  <!-- 진입 헤더 -->
+  <div class="loc-header loc-header-green">
+    <span class="corner tl"></span>
+    <span class="corner tr"></span>
+    <span class="corner bl"></span>
+    <span class="corner br"></span>
+    <div class="loc-tag">NOW ENTERING</div>
+    <div class="loc-name">장례식장</div>
+    <div class="loc-sub">FUNERAL HALL · 진입 완료</div>
+  </div>
+
+  <!-- 진입 안내 카드 -->
+  <div class="case enter-case">
+    <div class="case-tab tab-green">BRIEFING</div>
+    <div class="case-head">
+      <span>BRIEF NO. <span class="num">#B-7F</span></span>
+      <span>READ CAREFULLY</span>
+    </div>
+    <div class="case-title">
+      장례식장에 <span class="accent3">진입합니다</span>
+    </div>
+    <div class="enter-msg">
+      진입 시에 소지할 <b>소지품</b>을 각자 자신의 소지품에서 <b>하나씩 골라 착용</b>해주세요.
+      <div class="enter-note">
+        <span class="note-ico">ⓘ</span>
+        어떤 것을 착용했느냐에 따라 <b>승점을 획득</b>합니다.
+      </div>
+    </div>
+    <div class="enter-after">
+      그 이후 <b>엔딩북</b>을 펼쳐 <b>결과를 확인</b>해주세요.
+    </div>
+  </div>
+
+  <!-- 정정/오류 안내 박스 -->
+  <div class="errata-box">
+    <div class="errata-stripes"></div>
+    <div class="errata-body">
+      <div class="errata-head">
+        <span class="errata-ico">⚠</span>
+        <span class="errata-title">ERRATUM · 정정 공지</span>
+      </div>
+      <div class="errata-msg">
+        엔딩북 확인 시 <b class="errata-q">1번 문제</b>의 경우<br>
+        <b class="errata-from">1점</b>이 아니라 <b class="errata-to">2점 획득</b>입니다.
+      </div>
+    </div>
+    <div class="errata-stripes"></div>
+  </div>
+
+  <!-- 푸터 티커 -->
+  <div class="ticker">
+    <span>SYS</span>
+    <div class="stream">
+      <div class="stream-inner">
+        ▸ 진입 인증 완료 ▸ 게임 종료 단계 ▸ 엔딩북 확인 요망 ▸ 정정 공지 확인 필수 ▸ 본 단말기의 모든 활동은 기록됩니다 ▸
       </div>
     </div>
     <span class="end">REC ●</span>
@@ -1698,6 +1950,8 @@
   const pwLabel = document.getElementById('pwLabel');
   const pwMsg = document.getElementById('pwMsg');
   const pwSub = document.getElementById('pwSub');
+  const enterBtn = document.getElementById('enterBtn');
+  const terminal3 = document.getElementById('terminal3');
 
   const PASSWORD = 'SEED';
 
@@ -1706,6 +1960,7 @@
     pwSubmit.disabled = v.length === 0;
     if(pwResult.classList.contains('show')){
       pwResult.classList.remove('show','success','error');
+      enterBtn.hidden = true;
     }
   }
   pwInput.addEventListener('input', pwSync);
@@ -1721,10 +1976,12 @@
       pwLabel.textContent = '▸ ACCESS GRANTED // 인증 완료';
       pwMsg.textContent = '정답입니다';
       pwSub.innerHTML = '장례식장 출입이 <b>승인</b>되었습니다.';
+      enterBtn.hidden = false;
     } else {
       pwLabel.textContent = '▸ ACCESS DENIED // 인증 거부';
       pwMsg.textContent = '오답입니다';
       pwSub.innerHTML = '비밀번호 불일치 · <b>상대 플레이어</b>에게 기회가 넘어갑니다.';
+      enterBtn.hidden = true;
     }
     if(navigator.vibrate){
       navigator.vibrate(ok ? [40,30,40] : [120]);
@@ -1745,12 +2002,30 @@
     }
   });
 
+  // 진입하기 버튼 → 페이지3 전환
+  enterBtn.addEventListener('click', ()=>{
+    if(navigator.vibrate) navigator.vibrate(50);
+    terminal2.hidden = true;
+    terminal3.hidden = false;
+    window.scrollTo({top:0, behavior:'instant'});
+  });
+
+  // 페이지3 시계
+  function tick3(){
+    const d = new Date();
+    const z = n => String(n).padStart(2,'0');
+    const el = document.getElementById('clock3');
+    if(el) el.textContent = `${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}`;
+  }
+  setInterval(tick3, 1000);
+  tick3();
+
   // ====== 힌트 시스템 (모달 팝업) ======
   // ⚠ 게임에 맞게 힌트 내용을 여기서 수정하세요
   const HINTS = [
-    '[ 힌트 1 내용을 여기에 작성하세요. ]',
-    '[ 힌트 2 내용을 여기에 작성하세요. ]',
-    '[ 힌트 3 내용을 여기에 작성하세요. ]',
+    '아무래도 시안의 아지트에는 4자리의 알파벳 비밀번호로 이루어진 잠금 장치가 걸려 있다.\n오류가 난다면 보안 시스템에 발각되어 문제가 생길지 모른다. 어딘가에 비밀번호와 관련된 단서가 남겨져 있지 않을까?',
+    '4자리 알파벳... 시안과 관련된 무언가이지 않을까? 앨범 이름? 곡 제목? 또, 분명 연관된 자들에게는 비밀번호를 유추할 수 있는 메세지를 보냈을 것이다.',
+    '그러고보니 메세지... 뭔가 글자의 배치가 이상하다.\n무언가를 나타내는 것 같은데...\n채워진 공간과 빈 공간을 자세히 살펴보면 무언가 나타나는 것 같다.\n4개의 메세지를 모두 모아 확인해보자.',
   ];
 
   const hintBtns = document.querySelectorAll('.hint-btn');
