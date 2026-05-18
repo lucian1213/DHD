@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#000510">
-<title>K-CYBER POLICE // CASE TERMINAL</title>
+<title>POLICE // CASE TERMINAL</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&family=IBM+Plex+Sans+KR:wght@300;500;700&family=Black+Han+Sans&display=swap" rel="stylesheet">
@@ -419,65 +419,63 @@
   }
   .answer-wrap{
     position:relative;
-  }
-  .answer-grid{
-    display:grid;
-    grid-template-columns:repeat(4, 1fr);
-    gap:8px;
     margin-bottom:12px;
-    pointer-events:none;
   }
-  .cell{
-    aspect-ratio:1/1.15;
-    border:1.5px solid var(--line-strong);
+  .answer-wrap::before,
+  .answer-wrap::after{
+    content:"";
+    position:absolute;
+    width:10px; height:10px;
+    border:1.5px solid var(--magenta);
+    pointer-events:none;
+    z-index:2;
+  }
+  .answer-wrap::before{
+    top:-4px; left:-4px;
+    border-right:none; border-bottom:none;
+  }
+  .answer-wrap::after{
+    bottom:-4px; right:-4px;
+    border-left:none; border-top:none;
+  }
+  .answer-field{
+    width:100%;
+    padding:18px 16px;
     background:rgba(0,15,35,0.7);
-    display:flex; align-items:center; justify-content:center;
+    border:1.5px solid var(--line-strong);
+    color:var(--cyan);
     font-family:'IBM Plex Sans KR', sans-serif;
     font-weight:700;
-    font-size:30px;
-    color:var(--cyan);
-    text-shadow:0 0 10px rgba(0,240,255,0.7);
-    position:relative;
-    transition:all 0.2s;
-  }
-  .cell.filled{
-    border-color:var(--cyan);
-    box-shadow:0 0 16px rgba(0,240,255,0.35) inset, 0 0 12px rgba(0,240,255,0.25);
-    background:rgba(0,60,100,0.4);
-  }
-  .cell.active{
-    border-color:var(--amber);
-    box-shadow:0 0 16px rgba(255,176,32,0.4) inset;
-  }
-  .cell .corner{
-    position:absolute; width:6px; height:6px;
-    border:1.5px solid var(--magenta);
-  }
-  .cell .corner.tl{top:3px; left:3px; border-right:none; border-bottom:none}
-  .cell .corner.br{bottom:3px; right:3px; border-left:none; border-top:none}
-  .cell .cursor{
-    width:2px; height:60%;
-    background:var(--amber);
-    animation:blink 0.7s infinite;
-    box-shadow:0 0 6px var(--amber);
-  }
-
-  .real-input{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    opacity:0;
-    font-size:30px;
-    border:none;
-    background:transparent;
-    color:transparent;
-    -webkit-text-fill-color:transparent;
-    caret-color:transparent;
-    z-index:5;
+    font-size:22px;
+    letter-spacing:0.08em;
     text-align:center;
+    text-shadow:0 0 10px rgba(0,240,255,0.6);
+    transition:all 0.25s;
+    outline:none;
+    caret-color:var(--amber);
+    -webkit-appearance:none;
+    appearance:none;
+    border-radius:0;
   }
-  .real-input:focus{outline:none}
+  .answer-field::placeholder{
+    color:var(--text-dim);
+    font-weight:500;
+    font-size:15px;
+    letter-spacing:0.04em;
+    text-shadow:none;
+    opacity:0.7;
+  }
+  .answer-field:focus{
+    border-color:var(--cyan);
+    background:rgba(0,60,100,0.4);
+    box-shadow:
+      0 0 20px rgba(0,240,255,0.35),
+      inset 0 0 20px rgba(0,240,255,0.12);
+  }
+  .answer-field:not(:placeholder-shown){
+    border-color:var(--amber);
+    box-shadow:inset 0 0 18px rgba(255,176,32,0.15);
+  }
 
   .submit-btn{
     width:100%;
@@ -616,7 +614,7 @@
   /* 작은 폰 대응 */
   @media (max-width:340px){
     .case-title{font-size:19px}
-    .cell{font-size:24px}
+    .answer-field{font-size:19px; padding:16px 12px}
     .submit-btn{font-size:11.5px; letter-spacing:0.18em}
     .crest-text .title{font-size:13px}
   }
@@ -642,7 +640,7 @@
     </div>
   </div>
 
-  <div class="boot-logo">K-CYBER POLICE // SECURE TERMINAL</div>
+  <div class="boot-logo">POLICE // SECURE TERMINAL</div>
 
   <div class="boot-log" id="bootLog"></div>
 
@@ -697,8 +695,8 @@
         </svg>
       </div>
       <div class="crest-text">
-        <div class="title">K-CYBER POL.</div>
-        <div class="sub">한국 사이버 경찰청 · 특수수사부</div>
+        <div class="title">POLICE</div>
+        <div class="sub">경찰청 · 특수수사부</div>
         <div class="div">DIVISION 07 // 강력범죄 추적반</div>
       </div>
     </div>
@@ -731,49 +729,36 @@
       <span>CLASSIFIED</span>
     </div>
     <div class="case-title">
-      용의자 최종 <span class="accent">목격지점</span> 식별
-    </div>
-    <div class="case-meta">
-      목격시각 <span>23:47:12 KST</span><br>
-      추적신호 <span>차량 GPS · 단말기 신호 소실</span><br>
-      마지막 좌표 <span>37.░░░░° N / 127.░░░░° E</span>
+      용의자 최종 <span class="accent">목적지</span> 식별
     </div>
     <div class="case-prompt">
-      용의자가 마지막으로 모습을 감춘 장소의 이름을 입력하시오.<br>
-      형식: <b>한글 4글자</b>
+      용의자가 마지막으로 모습을 감춘 장소의 이름을 입력하시오.
     </div>
   </div>
 
   <!-- 정답 입력 -->
   <div class="input-section">
     <div class="input-label">
-      EVIDENCE INPUT · 증거 입력
-      <span class="count"><span id="charCount">0</span> / 4</span>
+      DESTINATION INPUT · 목적지 입력
     </div>
 
     <div class="answer-wrap">
-      <div class="answer-grid" id="grid">
-        <div class="cell" data-i="0"><span class="corner tl"></span><span class="corner br"></span><span class="char"></span></div>
-        <div class="cell" data-i="1"><span class="corner tl"></span><span class="corner br"></span><span class="char"></span></div>
-        <div class="cell" data-i="2"><span class="corner tl"></span><span class="corner br"></span><span class="char"></span></div>
-        <div class="cell" data-i="3"><span class="corner tl"></span><span class="corner br"></span><span class="char"></span></div>
-      </div>
       <input
-        class="real-input"
+        class="answer-field"
         id="answer"
         type="text"
         inputmode="text"
-        maxlength="4"
         autocomplete="off"
         autocorrect="off"
         autocapitalize="off"
         spellcheck="false"
+        placeholder="목적지를 입력하시오..."
         aria-label="정답 입력"
       />
     </div>
 
     <button class="submit-btn" id="submit" disabled>
-      <span class="ico">▶</span>증거 제출 · TRANSMIT
+      <span class="ico">▶</span>전송 · TRANSMIT
     </button>
 
     <div class="result" id="result">
@@ -805,7 +790,7 @@
     {t:'> 생체 인증 (망막 + 음성) ................... <span class="ok">[ OK ]</span>', cls:''},
     {t:'> <span class="warn">ICE 방화벽 우회 1단계</span> ................. <span class="ok">[ OK ]</span>', cls:''},
     {t:'> <span class="warn">ICE 방화벽 우회 2단계</span> ................. <span class="ok">[ OK ]</span>', cls:''},
-    {t:'> <span class="ic">K-CYBER POLICE</span> 메인프레임 연결 ......... <span class="ok">[ OK ]</span>', cls:''},
+    {t:'> <span class="ic">POLICE</span> 메인프레임 연결 ................ <span class="ok">[ OK ]</span>', cls:''},
     {t:'> 사건 파일 #2087-K-9931 조회 ............... <span class="ok">[ FOUND ]</span>', cls:''},
     {t:'> <span class="dim">권한 검증 · 등급 CLASS-Ⅰ 확인</span>', cls:''},
     {t:'> 복호화 키 적재 중...', cls:''},
@@ -838,10 +823,8 @@
   }
   tick(); setInterval(tick, 1000);
 
-  // ====== 정답 입력 동기화 ======
+  // ====== 정답 입력 ======
   const input = document.getElementById('answer');
-  const cells = document.querySelectorAll('.cell');
-  const charCount = document.getElementById('charCount');
   const submit = document.getElementById('submit');
   const result = document.getElementById('result');
   const rLabel = document.getElementById('rLabel');
@@ -849,28 +832,8 @@
   const rSub = document.getElementById('rSub');
 
   function sync(){
-    const v = input.value;
-    cells.forEach((c, idx)=>{
-      const ch = c.querySelector('.char');
-      const old = ch.textContent;
-      ch.textContent = '';
-      // 기존 커서 제거
-      const oldCursor = c.querySelector('.cursor');
-      if(oldCursor) oldCursor.remove();
-
-      c.classList.remove('filled','active');
-      if(v[idx]){
-        ch.textContent = v[idx];
-        c.classList.add('filled');
-      } else if(idx === v.length){
-        c.classList.add('active');
-        const cur = document.createElement('span');
-        cur.className = 'cursor';
-        c.appendChild(cur);
-      }
-    });
-    charCount.textContent = v.length;
-    submit.disabled = v.length !== 4;
+    const v = input.value.trim();
+    submit.disabled = v.length === 0;
     // 입력 변경 시 결과 숨기기
     if(result.classList.contains('show')){
       result.classList.remove('show','success','error');
@@ -879,10 +842,6 @@
   input.addEventListener('input', sync);
   input.addEventListener('compositionupdate', sync);
   input.addEventListener('compositionend', sync);
-
-  // 셀 영역 탭하면 입력창 포커스
-  document.getElementById('grid').addEventListener('click', ()=> input.focus());
-  document.querySelector('.answer-wrap').addEventListener('click', ()=> input.focus());
 
   // 초기 동기화
   sync();
