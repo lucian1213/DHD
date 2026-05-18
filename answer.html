@@ -1270,7 +1270,7 @@
         <span>게임 규칙 · GAME RULE</span>
       </div>
       <div class="rule-body">
-        목적지를 맞춘 <b>정답자</b>가 <b>먼저 입력</b>합니다.<br>
+        목적지를 맞춘 <b>정답자가 아닌 상대</b>가 <b>먼저 입력</b>합니다.<br>
         오답일 경우 <b class="warn-tx">상대에게 기회가 넘어갑니다.</b>
       </div>
     </div>
@@ -1427,12 +1427,12 @@
     if(ok){
       rLabel.textContent = '▸ MATCH FOUND // 일치';
       rMsg.textContent = '정답입니다';
-      rSub.innerHTML = '정답자는 <b>승점 2점</b>을 획득합니다.<br>후에 <b>장례식장</b>으로 이동합니다.';
+      rSub.innerHTML = '정답자는 <b>승점 2점</b>을 획득합니다.<br>버튼을 눌러 <b>장례식장</b>으로 이동합니다.';
       travelBtn.hidden = false;
     } else {
       rLabel.textContent = '▸ NO MATCH // 불일치';
       rMsg.textContent = '오답입니다';
-      rSub.innerHTML = '증거 거부됨 · 다시 확인 후 재입력 요망';
+      rSub.innerHTML = '<b>상대</b>에게 차례가 넘어갑니다.';
       travelBtn.hidden = true;
     }
     // 폰 햅틱 (지원 기기)
