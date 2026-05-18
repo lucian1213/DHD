@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#000510">
+<title>K-CYBER POLICE // CASE TERMINAL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&family=IBM+Plex+Sans+KR:wght@300;500;700&family=Black+Han+Sans&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#000510;
+    --bg-2:#020a1c;
+    --panel:rgba(8,18,38,0.72);
+    --line:rgba(0,240,255,0.18);
+    --line-strong:rgba(0,240,255,0.55);
+    --cyan:#00f0ff;
+    --cyan-soft:#5ce8ff;
+    --amber:#ffb020;
+    --red:#ff2e5a;
+    --green:#22ff88;
+    --magenta:#ff2bd6;
+    --text:#cfeaff;
+    --text-dim:#6b8aa8;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  html, body{
+    height:100%;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans KR','Share Tech Mono',monospace;
+    overflow-x:hidden;
+    overscroll-behavior:none;
+  }
+  body{
+    position:relative;
+    min-height:100vh;
+    min-height:100dvh;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,180,255,0.18), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 50% 110%, rgba(255,43,214,0.10), transparent 70%),
+      linear-gradient(180deg, #000510 0%, #02091c 60%, #000510 100%);
+  }
+  /* 격자 배경 */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(0,240,255,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,240,255,0.05) 1px, transparent 1px);
+    background-size:32px 32px;
+    mask-image:radial-gradient(ellipse at 50% 50%, black 30%, transparent 80%);
+    -webkit-mask-image:radial-gradient(ellipse at 50% 50%, black 30%, transparent 80%);
+    pointer-events:none;
+    z-index:1;
+  }
+  /* 스캔라인 + 노이즈 */
+  body::after{
+    content:"";
+    position:fixed; inset:0;
+    background:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 1px, transparent 1px, transparent 3px);
+    pointer-events:none;
+    z-index:50;
+    mix-blend-mode:multiply;
+    animation:flicker 6s infinite;
+  }
+  @keyframes flicker{
+    0%,96%,100%{opacity:1}
+    97%{opacity:0.75}
+    98%{opacity:1}
+    98.5%{opacity:0.6}
+    99%{opacity:1}
+  }
+
+  /* ===== 로딩 화면 ===== */
+  .boot{
+    position:fixed; inset:0;
+    background:#000510;
+    z-index:100;
+    padding:20px 18px;
+    font-family:'Share Tech Mono', monospace;
+    color:var(--cyan-soft);
+    font-size:12.5px;
+    line-height:1.55;
+    overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+  .boot.hide{
+    animation:bootOut 0.6s forwards;
+  }
+  @keyframes bootOut{
+    0%{opacity:1; filter:blur(0) brightness(1)}
+    30%{opacity:1; filter:blur(0) brightness(2.4)}
+    100%{opacity:0; filter:blur(8px) brightness(0); visibility:hidden}
+  }
+  .boot-head{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    border-bottom:1px solid var(--line);
+    padding-bottom:10px; margin-bottom:14px;
+    font-size:10.5px;
+    letter-spacing:0.08em;
+    color:var(--text-dim);
+  }
+  .boot-head .tag{color:var(--amber)}
+  .boot-head .blink{animation:blink 0.9s infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  .boot-logo{
+    font-family:'Orbitron', sans-serif;
+    color:var(--cyan);
+    font-size:14px;
+    letter-spacing:0.22em;
+    font-weight:700;
+    text-shadow:0 0 12px rgba(0,240,255,0.6);
+  }
+
+  .boot-log{
+    flex:1;
+    overflow:hidden;
+  }
+  .log-line{
+    opacity:0;
+    transform:translateX(-6px);
+    animation:logIn 0.18s forwards;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .log-line .ok{color:var(--green)}
+  .log-line .warn{color:var(--amber)}
+  .log-line .dim{color:var(--text-dim)}
+  .log-line .ic{color:var(--magenta)}
+  @keyframes logIn{
+    to{opacity:1; transform:translateX(0)}
+  }
+
+  .boot-progress{
+    margin-top:12px;
+    border:1px solid var(--line-strong);
+    padding:10px 12px;
+    background:rgba(0,30,60,0.3);
+    opacity:0;
+    animation:logIn 0.3s forwards;
+    animation-delay:2.4s;
+  }
+  .bp-label{
+    font-size:10.5px;
+    color:var(--text-dim);
+    display:flex; justify-content:space-between;
+    margin-bottom:8px;
+    letter-spacing:0.06em;
+  }
+  .bp-label b{color:var(--cyan); font-weight:normal}
+  .bar{
+    height:6px;
+    background:rgba(0,240,255,0.08);
+    border:1px solid rgba(0,240,255,0.25);
+    position:relative; overflow:hidden;
+  }
+  .bar-fill{
+    position:absolute; left:0; top:0; bottom:0;
+    width:0%;
+    background:linear-gradient(90deg, var(--cyan), var(--magenta));
+    box-shadow:0 0 12px var(--cyan);
+    animation:fill 2.6s cubic-bezier(0.6, 0, 0.2, 1) forwards;
+    animation-delay:2.5s;
+  }
+  @keyframes fill{
+    0%{width:0%}
+    40%{width:38%}
+    55%{width:42%}
+    100%{width:100%}
+  }
+  .bar-fill::after{
+    content:"";
+    position:absolute; right:0; top:0; bottom:0; width:20px;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.7));
+  }
+
+  .boot-foot{
+    margin-top:14px;
+    font-size:10px;
+    color:var(--text-dim);
+    text-align:center;
+    letter-spacing:0.15em;
+    opacity:0;
+    animation:logIn 0.3s forwards;
+    animation-delay:4.5s;
+  }
+  .boot-foot b{color:var(--green)}
+
+  /* 부트 시 스캔 라인 */
+  .scan-line{
+    position:absolute; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, transparent, var(--cyan), transparent);
+    box-shadow:0 0 18px var(--cyan);
+    top:0;
+    animation:scan 2.2s linear infinite;
+    opacity:0.7;
+  }
+  @keyframes scan{
+    0%{top:0}
+    100%{top:100%}
+  }
+
+  /* ===== 메인 단말기 ===== */
+  .terminal{
+    position:relative;
+    z-index:2;
+    min-height:100vh;
+    min-height:100dvh;
+    padding:14px 14px 28px;
+    display:flex; flex-direction:column;
+    gap:14px;
+    opacity:0;
+    animation:terminalIn 0.7s 0.1s forwards;
+    max-width:520px;
+    margin:0 auto;
+  }
+  @keyframes terminalIn{
+    from{opacity:0; transform:translateY(8px)}
+    to{opacity:1; transform:translateY(0)}
+  }
+
+  /* 상단 헤더바 */
+  .topbar{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'Share Tech Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.1em;
+    color:var(--text-dim);
+    padding-bottom:8px;
+    border-bottom:1px solid var(--line);
+  }
+  .topbar .left{display:flex; gap:10px; align-items:center}
+  .dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 8px var(--green);
+    animation:pulse 1.8s infinite;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:1; transform:scale(1)}
+    50%{opacity:0.5; transform:scale(0.75)}
+  }
+  .topbar .right{display:flex; gap:8px; color:var(--amber)}
+
+  /* 배지/엠블럼 영역 */
+  .crest{
+    position:relative;
+    border:1px solid var(--line-strong);
+    background:linear-gradient(180deg, rgba(0,30,70,0.55), rgba(0,15,35,0.6));
+    padding:18px 16px 16px;
+    overflow:hidden;
+  }
+  .crest::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 80% 0%, rgba(0,240,255,0.18), transparent 60%),
+      radial-gradient(circle at 0% 100%, rgba(255,43,214,0.10), transparent 60%);
+    pointer-events:none;
+  }
+  .crest .corner{
+    position:absolute; width:14px; height:14px;
+    border:1.5px solid var(--cyan);
+  }
+  .crest .corner.tl{top:5px; left:5px; border-right:none; border-bottom:none}
+  .crest .corner.tr{top:5px; right:5px; border-left:none; border-bottom:none}
+  .crest .corner.bl{bottom:5px; left:5px; border-right:none; border-top:none}
+  .crest .corner.br{bottom:5px; right:5px; border-left:none; border-top:none}
+
+  .crest-row{
+    display:flex; align-items:center; gap:14px;
+    position:relative;
+  }
+  .badge{
+    width:56px; height:56px;
+    flex-shrink:0;
+    position:relative;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .badge svg{width:100%; height:100%; filter:drop-shadow(0 0 6px var(--cyan))}
+  .crest-text .title{
+    font-family:'Orbitron', sans-serif;
+    font-weight:900;
+    font-size:15px;
+    letter-spacing:0.18em;
+    color:var(--cyan);
+    text-shadow:0 0 10px rgba(0,240,255,0.55);
+    line-height:1;
+  }
+  .crest-text .sub{
+    font-family:'IBM Plex Sans KR', sans-serif;
+    font-weight:500;
+    font-size:13.5px;
+    margin-top:6px;
+    color:var(--text);
+    letter-spacing:0.04em;
+  }
+  .crest-text .div{
+    font-family:'Share Tech Mono', monospace;
+    font-size:10px;
+    margin-top:4px;
+    color:var(--amber);
+    letter-spacing:0.12em;
+  }
+
+  .clearance{
+    margin-top:14px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    font-family:'Share Tech Mono', monospace;
+    font-size:10px;
+    color:var(--text-dim);
+  }
+  .clearance div{
+    border-left:2px solid var(--cyan);
+    padding:4px 8px;
+    background:rgba(0,240,255,0.04);
+  }
+  .clearance b{
+    display:block;
+    color:var(--cyan-soft);
+    font-weight:normal;
+    margin-top:2px;
+    letter-spacing:0.06em;
+    font-size:11px;
+  }
+  .clearance .red b{color:var(--red)}
+  .clearance .red{border-left-color:var(--red); background:rgba(255,46,90,0.06)}
+
+  /* 사건 파일 */
+  .case{
+    background:var(--panel);
+    border:1px solid var(--line-strong);
+    padding:14px 14px 16px;
+    position:relative;
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+  }
+  .case-tab{
+    position:absolute; top:-1px; left:14px;
+    transform:translateY(-100%);
+    background:var(--cyan);
+    color:#001020;
+    font-family:'Orbitron', sans-serif;
+    font-weight:700;
+    font-size:9.5px;
+    padding:3px 10px;
+    letter-spacing:0.18em;
+  }
+  .case-head{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'Share Tech Mono', monospace;
+    font-size:10.5px;
+    color:var(--text-dim);
+    margin-bottom:10px;
+    letter-spacing:0.08em;
+  }
+  .case-head .num{color:var(--amber)}
+  .case-title{
+    font-family:'Black Han Sans', sans-serif;
+    font-size:22px;
+    color:var(--text);
+    line-height:1.15;
+    letter-spacing:0.02em;
+    margin-bottom:8px;
+  }
+  .case-title .accent{color:var(--magenta); text-shadow:0 0 8px rgba(255,43,214,0.5)}
+  .case-meta{
+    font-size:12.5px;
+    color:var(--text-dim);
+    line-height:1.6;
+    padding:10px 12px;
+    background:rgba(0,0,0,0.35);
+    border-left:2px solid var(--amber);
+    margin-bottom:12px;
+  }
+  .case-meta span{color:var(--cyan-soft)}
+  .case-prompt{
+    font-family:'IBM Plex Sans KR', sans-serif;
+    font-size:13.5px;
+    color:var(--text);
+    line-height:1.55;
+    letter-spacing:0.01em;
+  }
+  .case-prompt b{
+    color:var(--amber);
+    font-weight:700;
+    text-shadow:0 0 6px rgba(255,176,32,0.45);
+  }
+
+  /* 입력 영역 */
+  .input-section{
+    background:var(--panel);
+    border:1px solid var(--line-strong);
+    padding:16px 14px;
+    position:relative;
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+  }
+  .input-label{
+    font-family:'Share Tech Mono', monospace;
+    font-size:10.5px;
+    color:var(--cyan);
+    letter-spacing:0.16em;
+    margin-bottom:10px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .input-label .count{color:var(--amber)}
+  .input-label::before{
+    content:"▸";
+    margin-right:6px;
+    color:var(--magenta);
+  }
+  .answer-wrap{
+    position:relative;
+  }
+  .answer-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:8px;
+    margin-bottom:12px;
+    pointer-events:none;
+  }
+  .cell{
+    aspect-ratio:1/1.15;
+    border:1.5px solid var(--line-strong);
+    background:rgba(0,15,35,0.7);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Sans KR', sans-serif;
+    font-weight:700;
+    font-size:30px;
+    color:var(--cyan);
+    text-shadow:0 0 10px rgba(0,240,255,0.7);
+    position:relative;
+    transition:all 0.2s;
+  }
+  .cell.filled{
+    border-color:var(--cyan);
+    box-shadow:0 0 16px rgba(0,240,255,0.35) inset, 0 0 12px rgba(0,240,255,0.25);
+    background:rgba(0,60,100,0.4);
+  }
+  .cell.active{
+    border-color:var(--amber);
+    box-shadow:0 0 16px rgba(255,176,32,0.4) inset;
+  }
+  .cell .corner{
+    position:absolute; width:6px; height:6px;
+    border:1.5px solid var(--magenta);
+  }
+  .cell .corner.tl{top:3px; left:3px; border-right:none; border-bottom:none}
+  .cell .corner.br{bottom:3px; right:3px; border-left:none; border-top:none}
+  .cell .cursor{
+    width:2px; height:60%;
+    background:var(--amber);
+    animation:blink 0.7s infinite;
+    box-shadow:0 0 6px var(--amber);
+  }
+
+  .real-input{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    opacity:0;
+    font-size:30px;
+    border:none;
+    background:transparent;
+    color:transparent;
+    -webkit-text-fill-color:transparent;
+    caret-color:transparent;
+    z-index:5;
+    text-align:center;
+  }
+  .real-input:focus{outline:none}
+
+  .submit-btn{
+    width:100%;
+    margin-top:6px;
+    padding:14px;
+    background:linear-gradient(135deg, rgba(0,240,255,0.18), rgba(255,43,214,0.18));
+    border:1.5px solid var(--cyan);
+    color:var(--cyan);
+    font-family:'Orbitron', sans-serif;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:0.22em;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    transition:all 0.25s;
+    text-shadow:0 0 8px rgba(0,240,255,0.6);
+  }
+  .submit-btn::before{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(120deg, transparent, rgba(0,240,255,0.4), transparent);
+    transform:translateX(-100%);
+    transition:transform 0.5s;
+  }
+  .submit-btn:active{
+    background:var(--cyan);
+    color:#001020;
+    text-shadow:none;
+    box-shadow:0 0 24px var(--cyan);
+  }
+  .submit-btn:active::before{transform:translateX(100%)}
+  .submit-btn[disabled]{
+    opacity:0.4;
+    cursor:not-allowed;
+    border-color:var(--text-dim);
+    color:var(--text-dim);
+    text-shadow:none;
+  }
+  .submit-btn .ico{margin-right:6px}
+
+  /* 결과 영역 */
+  .result{
+    margin-top:12px;
+    padding:14px;
+    border:1.5px solid;
+    font-family:'IBM Plex Sans KR', sans-serif;
+    text-align:center;
+    display:none;
+    position:relative;
+    overflow:hidden;
+    animation:resultIn 0.5s;
+  }
+  @keyframes resultIn{
+    0%{opacity:0; transform:translateY(-6px) scale(0.98); filter:blur(4px)}
+    40%{filter:blur(0)}
+    100%{opacity:1; transform:translateY(0) scale(1); filter:blur(0)}
+  }
+  .result.show{display:block}
+  .result .r-label{
+    font-family:'Share Tech Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.18em;
+    margin-bottom:6px;
+  }
+  .result .r-msg{
+    font-family:'Black Han Sans', sans-serif;
+    font-size:26px;
+    letter-spacing:0.05em;
+    line-height:1.1;
+  }
+  .result .r-sub{
+    font-size:11.5px;
+    color:var(--text-dim);
+    margin-top:8px;
+    letter-spacing:0.06em;
+  }
+  .result.success{
+    border-color:var(--green);
+    background:linear-gradient(180deg, rgba(34,255,136,0.12), rgba(34,255,136,0.04));
+    box-shadow:0 0 30px rgba(34,255,136,0.25), inset 0 0 30px rgba(34,255,136,0.1);
+  }
+  .result.success .r-label{color:var(--green)}
+  .result.success .r-msg{
+    color:var(--green);
+    text-shadow:0 0 14px rgba(34,255,136,0.7);
+  }
+  .result.error{
+    border-color:var(--red);
+    background:linear-gradient(180deg, rgba(255,46,90,0.12), rgba(255,46,90,0.04));
+    box-shadow:0 0 30px rgba(255,46,90,0.25), inset 0 0 30px rgba(255,46,90,0.1);
+    animation:resultIn 0.5s, shake 0.4s 0.4s;
+  }
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-6px)}
+    40%{transform:translateX(6px)}
+    60%{transform:translateX(-4px)}
+    80%{transform:translateX(4px)}
+  }
+  .result.error .r-label{color:var(--red)}
+  .result.error .r-msg{
+    color:var(--red);
+    text-shadow:0 0 14px rgba(255,46,90,0.7);
+  }
+
+  /* 푸터 티커 */
+  .ticker{
+    margin-top:auto;
+    border-top:1px solid var(--line);
+    padding-top:10px;
+    font-family:'Share Tech Mono', monospace;
+    font-size:9.5px;
+    color:var(--text-dim);
+    letter-spacing:0.12em;
+    display:flex; justify-content:space-between; align-items:center;
+    overflow:hidden;
+  }
+  .ticker .stream{
+    flex:1;
+    overflow:hidden;
+    margin:0 10px;
+    white-space:nowrap;
+  }
+  .ticker .stream-inner{
+    display:inline-block;
+    animation:slide 28s linear infinite;
+    padding-left:100%;
+  }
+  @keyframes slide{
+    0%{transform:translateX(0)}
+    100%{transform:translateX(-100%)}
+  }
+  .ticker .end{color:var(--amber)}
+
+  /* 작은 폰 대응 */
+  @media (max-width:340px){
+    .case-title{font-size:19px}
+    .cell{font-size:24px}
+    .submit-btn{font-size:11.5px; letter-spacing:0.18em}
+    .crest-text .title{font-size:13px}
+  }
+  /* 키보드 올라왔을 때 */
+  @media (max-height:520px){
+    .crest{padding:10px 14px}
+    .badge{width:42px; height:42px}
+    .case-title{font-size:18px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== 부팅/로딩 화면 ===== -->
+<div class="boot" id="boot">
+  <div class="scan-line"></div>
+  <div class="boot-head">
+    <div>
+      <span class="tag">[ ENCRYPTED CHANNEL ]</span>
+    </div>
+    <div>
+      NODE-7F.KR <span class="blink">█</span>
+    </div>
+  </div>
+
+  <div class="boot-logo">K-CYBER POLICE // SECURE TERMINAL</div>
+
+  <div class="boot-log" id="bootLog"></div>
+
+  <div class="boot-progress">
+    <div class="bp-label">
+      <span>DECRYPTING CASE FILE</span>
+      <b>#2087-K-9931</b>
+    </div>
+    <div class="bar"><div class="bar-fill"></div></div>
+  </div>
+
+  <div class="boot-foot">
+    [ <b>SECURE</b> ] AES-512 / QUANTUM-TUNNEL / 6.6Tbps
+  </div>
+</div>
+
+<!-- ===== 메인 단말기 ===== -->
+<div class="terminal" id="terminal" aria-hidden="false">
+
+  <!-- 상단 상태바 -->
+  <div class="topbar">
+    <div class="left">
+      <span class="dot"></span>
+      <span>LIVE · 보안채널 활성</span>
+    </div>
+    <div class="right">
+      <span id="clock">--:--:--</span>
+    </div>
+  </div>
+
+  <!-- 엠블럼 -->
+  <div class="crest">
+    <span class="corner tl"></span>
+    <span class="corner tr"></span>
+    <span class="corner bl"></span>
+    <span class="corner br"></span>
+
+    <div class="crest-row">
+      <div class="badge">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <!-- 방패 -->
+          <path d="M32 4 L56 12 V30 C56 46 44 56 32 60 C20 56 8 46 8 30 V12 Z"
+                stroke="#00f0ff" stroke-width="1.8" fill="rgba(0,240,255,0.06)"/>
+          <path d="M32 10 L50 16 V30 C50 42 41 50 32 53 C23 50 14 42 14 30 V16 Z"
+                stroke="#ff2bd6" stroke-width="1" fill="none" opacity="0.7"/>
+          <!-- 별 -->
+          <path d="M32 18 L34.5 26 H43 L36 31 L38.5 39 L32 34 L25.5 39 L28 31 L21 26 H29.5 Z"
+                fill="#00f0ff" opacity="0.9"/>
+          <!-- 회로 -->
+          <circle cx="32" cy="44" r="2" fill="#ff2bd6"/>
+          <path d="M32 44 V50 M28 47 H36" stroke="#ff2bd6" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="crest-text">
+        <div class="title">K-CYBER POL.</div>
+        <div class="sub">한국 사이버 경찰청 · 특수수사부</div>
+        <div class="div">DIVISION 07 // 강력범죄 추적반</div>
+      </div>
+    </div>
+
+    <div class="clearance">
+      <div>
+        보안등급
+        <b>CLASS-Ⅰ</b>
+      </div>
+      <div class="red">
+        사건상태
+        <b>긴급 (URGENT)</b>
+      </div>
+      <div>
+        담당관
+        <b>OFFICER ░░░░</b>
+      </div>
+      <div>
+        승인코드
+        <b>α-9931-RZ</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- 사건 파일 -->
+  <div class="case">
+    <div class="case-tab">CASE FILE</div>
+    <div class="case-head">
+      <span>FILE NO. <span class="num">#2087-K-9931</span></span>
+      <span>CLASSIFIED</span>
+    </div>
+    <div class="case-title">
+      용의자 최종 <span class="accent">목격지점</span> 식별
+    </div>
+    <div class="case-meta">
+      목격시각 <span>23:47:12 KST</span><br>
+      추적신호 <span>차량 GPS · 단말기 신호 소실</span><br>
+      마지막 좌표 <span>37.░░░░° N / 127.░░░░° E</span>
+    </div>
+    <div class="case-prompt">
+      용의자가 마지막으로 모습을 감춘 장소의 이름을 입력하시오.<br>
+      형식: <b>한글 4글자</b>
+    </div>
+  </div>
+
+  <!-- 정답 입력 -->
+  <div class="input-section">
+    <div class="input-label">
+      EVIDENCE INPUT · 증거 입력
+      <span class="count"><span id="charCount">0</span> / 4</span>
+    </div>
+
+    <div class="answer-wrap">
+      <div class="answer-grid" id="grid">
+        <div class="cell" data-i="0"><span class="corner tl"></span><span class="corner br"></span><span class="char"></span></div>
+        <div class="cell" data-i="1"><span class="corner tl"></span><span class="corner br"></span><span class="char"></span></div>
+        <div class="cell" data-i="2"><span class="corner tl"></span><span class="corner br"></span><span class="char"></span></div>
+        <div class="cell" data-i="3"><span class="corner tl"></span><span class="corner br"></span><span class="char"></span></div>
+      </div>
+      <input
+        class="real-input"
+        id="answer"
+        type="text"
+        inputmode="text"
+        maxlength="4"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        aria-label="정답 입력"
+      />
+    </div>
+
+    <button class="submit-btn" id="submit" disabled>
+      <span class="ico">▶</span>증거 제출 · TRANSMIT
+    </button>
+
+    <div class="result" id="result">
+      <div class="r-label" id="rLabel"></div>
+      <div class="r-msg" id="rMsg"></div>
+      <div class="r-sub" id="rSub"></div>
+    </div>
+  </div>
+
+  <!-- 푸터 티커 -->
+  <div class="ticker">
+    <span>SYS</span>
+    <div class="stream">
+      <div class="stream-inner">
+        ▸ ENCRYPTED TUNNEL OK ▸ 신호 강도 98% ▸ 외부 침입 시도 0건 ▸ 데이터 무결성 검증 완료 ▸ 추적 위성 K-SAT-4 동기화 ▸ 사건 파일 #2087-K-9931 활성 ▸ 본 단말기의 모든 활동은 기록됩니다 ▸
+      </div>
+    </div>
+    <span class="end">REC ●</span>
+  </div>
+</div>
+
+<script>
+  // ====== 로딩 시퀀스 ======
+  const bootLog = document.getElementById('bootLog');
+  const logs = [
+    {t:'> 보안 채널 개설 중...',                              cls:''},
+    {t:'> AES-512 핸드셰이크 ........................ <span class="ok">[ OK ]</span>', cls:''},
+    {t:'> 양자 터널링 활성화 ........................ <span class="ok">[ OK ]</span>', cls:''},
+    {t:'> 생체 인증 (망막 + 음성) ................... <span class="ok">[ OK ]</span>', cls:''},
+    {t:'> <span class="warn">ICE 방화벽 우회 1단계</span> ................. <span class="ok">[ OK ]</span>', cls:''},
+    {t:'> <span class="warn">ICE 방화벽 우회 2단계</span> ................. <span class="ok">[ OK ]</span>', cls:''},
+    {t:'> <span class="ic">K-CYBER POLICE</span> 메인프레임 연결 ......... <span class="ok">[ OK ]</span>', cls:''},
+    {t:'> 사건 파일 #2087-K-9931 조회 ............... <span class="ok">[ FOUND ]</span>', cls:''},
+    {t:'> <span class="dim">권한 검증 · 등급 CLASS-Ⅰ 확인</span>', cls:''},
+    {t:'> 복호화 키 적재 중...', cls:''},
+  ];
+
+  let i = 0;
+  function pushLog(){
+    if(i >= logs.length) return;
+    const line = document.createElement('div');
+    line.className = 'log-line';
+    line.innerHTML = logs[i].t;
+    line.style.animationDelay = '0s';
+    bootLog.appendChild(line);
+    i++;
+    setTimeout(pushLog, 230 + Math.random()*70);
+  }
+  pushLog();
+
+  // 부팅 종료
+  setTimeout(()=>{
+    document.getElementById('boot').classList.add('hide');
+    document.getElementById('answer').focus({preventScroll:true});
+  }, 5400);
+
+  // ====== 시계 ======
+  function tick(){
+    const d = new Date();
+    const z = n => String(n).padStart(2,'0');
+    document.getElementById('clock').textContent = `${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}`;
+  }
+  tick(); setInterval(tick, 1000);
+
+  // ====== 정답 입력 동기화 ======
+  const input = document.getElementById('answer');
+  const cells = document.querySelectorAll('.cell');
+  const charCount = document.getElementById('charCount');
+  const submit = document.getElementById('submit');
+  const result = document.getElementById('result');
+  const rLabel = document.getElementById('rLabel');
+  const rMsg = document.getElementById('rMsg');
+  const rSub = document.getElementById('rSub');
+
+  function sync(){
+    const v = input.value;
+    cells.forEach((c, idx)=>{
+      const ch = c.querySelector('.char');
+      const old = ch.textContent;
+      ch.textContent = '';
+      // 기존 커서 제거
+      const oldCursor = c.querySelector('.cursor');
+      if(oldCursor) oldCursor.remove();
+
+      c.classList.remove('filled','active');
+      if(v[idx]){
+        ch.textContent = v[idx];
+        c.classList.add('filled');
+      } else if(idx === v.length){
+        c.classList.add('active');
+        const cur = document.createElement('span');
+        cur.className = 'cursor';
+        c.appendChild(cur);
+      }
+    });
+    charCount.textContent = v.length;
+    submit.disabled = v.length !== 4;
+    // 입력 변경 시 결과 숨기기
+    if(result.classList.contains('show')){
+      result.classList.remove('show','success','error');
+    }
+  }
+  input.addEventListener('input', sync);
+  input.addEventListener('compositionupdate', sync);
+  input.addEventListener('compositionend', sync);
+
+  // 셀 영역 탭하면 입력창 포커스
+  document.getElementById('grid').addEventListener('click', ()=> input.focus());
+  document.querySelector('.answer-wrap').addEventListener('click', ()=> input.focus());
+
+  // 초기 동기화
+  sync();
+
+  // ====== 제출 ======
+  const ANSWER = '장례식장';
+
+  function showResult(ok){
+    result.classList.remove('success','error');
+    void result.offsetWidth; // reflow for animation restart
+    result.classList.add('show', ok ? 'success' : 'error');
+    if(ok){
+      rLabel.textContent = '▸ MATCH FOUND // 일치';
+      rMsg.textContent = '정답입니다';
+      rSub.textContent = '증거 채택 완료 · 사건 진행 권한 부여됨';
+    } else {
+      rLabel.textContent = '▸ NO MATCH // 불일치';
+      rMsg.textContent = '오답입니다';
+      rSub.textContent = '증거 거부됨 · 다시 확인 후 재입력 요망';
+    }
+    // 폰 햅틱 (지원 기기)
+    if(navigator.vibrate){
+      navigator.vibrate(ok ? [40,30,40] : [120]);
+    }
+  }
+
+  submit.addEventListener('click', ()=>{
+    if(submit.disabled) return;
+    const v = input.value.trim();
+    showResult(v === ANSWER);
+    // 결과로 스크롤
+    setTimeout(()=> result.scrollIntoView({behavior:'smooth', block:'center'}), 80);
+  });
+
+  // 엔터로 제출
+  input.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter' && !submit.disabled){
+      e.preventDefault();
+      submit.click();
+    }
+  });
+
+  // 더블탭 줌 방지(iOS)
+  let lastTouch = 0;
+  document.addEventListener('touchend', (e)=>{
+    const now = Date.now();
+    if(now - lastTouch <= 300) e.preventDefault();
+    lastTouch = now;
+  }, {passive:false});
+</script>
+</body>
+</html>
